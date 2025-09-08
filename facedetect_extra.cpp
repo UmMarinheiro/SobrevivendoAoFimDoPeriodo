@@ -20,10 +20,13 @@ public:
     std::pair<float, float> speed;
     
     string file;
+    float t = 0;
     void update()
     {
-        float r = getParent()->getLocalRotation();
-        getParent()->setLocalRotation(r+0.1f);
+        pair<float, float> nSize = {cos(t)+10,sin(t)+10};
+        getParent()->setGlobalSize(nSize);
+
+        t++;
         log();
     }
     void log()
@@ -34,11 +37,22 @@ public:
         cout<<" LocalPos: "<<v.first<<", "<<v.second<<endl;
         v = getGlobalPos();
         cout<<" globalPos: "<<v.first<<", "<<v.second<<endl;
+        
+        v = getLocalSize();
+        cout<<" LocalSize: "<<v.first<<", "<<v.second<<endl;
+        v = getGlobalSize();
+        cout<<" globalSize: "<<v.first<<", "<<v.second<<endl;
+
         cout<<"Parent: "<<endl;
         v = getParent()->getLocalPos();
         cout<<" ParentLocalPos: "<<v.first<<", "<<v.second<<endl;
         v = getParent()->getGlobalPos();
         cout<<" ParentGlobalPos: "<<v.first<<", "<<v.second<<endl;
+
+        v = getParent()->getLocalSize();
+        cout<<" LocalSize: "<<v.first<<", "<<v.second<<endl;
+        v = getParent()->getGlobalSize();
+        cout<<" globalSize: "<<v.first<<", "<<v.second<<endl;
         cout<<endl;
     }
     void draw(Mat smallFrame)
@@ -46,9 +60,14 @@ public:
         // Desenha uma imagem
         Mat img = imread(file, IMREAD_UNCHANGED), img2;
         //printf("img::width: %d, height=%d\n", img.cols, img.rows );
-        if (img.rows > 200 || img.cols > 200)
-            resize( img, img, Size(200, 200));
+        // if (img.rows > 200 || img.cols > 200)
         auto pos = getGlobalPos();
+        auto size = getGlobalSize();
+
+        pos.first -= size.first/2;
+        pos.second -= size.second/2;
+
+        resize(img, img, Size(size.first, size.second));
         drawImage(smallFrame, img, pos.first, pos.second);
     }
 };
@@ -64,7 +83,8 @@ int main( int argc, const char** argv )
     o->speed.second = 1;
     p->setLocalPos({300,300});
     o->setParent(p);
-    o->setLocalPos({100,0});
+    o->setLocalPos({0,0});
+    o->setLocalSize({10,10});
 
     o->log();
     
