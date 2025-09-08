@@ -13,13 +13,12 @@ void overlayImage(Mat &background, Mat &foreground, Point location);
 void mouseCallback(int event, int x, int y, int, void* userdata);
 
 // --- Estados do jogo ---
-enum Estado { MENU, JOGO, SAIR };
-Estado estado = MENU;
-
+enum Estado { MENU, JOGO, SAIR, OPTIONS, DESC };
+Estado estado;
 // --- Variáveis globais ---
 string cascadeName;
 string wName = "Game";
-Rect botaoJogar, botaoSair;
+Rect botaoJogar, botaoSair, botaoOpcoes, botaoDesc, botaoLeave;
 bool tryflip = true;
 double scale = 1;
 
@@ -29,8 +28,9 @@ VideoCapture capture;
 
 int main()
 {
-    // --- Abrir câmera ---
-    capture.open(0);
+    //--- Abrir câmera ---
+    if(!capture.open("video.mp4")) // para testar com um video
+    //capture.open(0);
     if (!capture.isOpened()) {
         cout << "Erro ao abrir a câmera!" << endl;
         return -1;
@@ -54,7 +54,7 @@ int main()
     }
 
     // --- Carregar sprite ---
-    orange = imread("orange.png", IMREAD_UNCHANGED);
+    orange = imread("naogrita.jpeg", IMREAD_UNCHANGED);
     if (orange.empty()) {
         cout << "Erro ao carregar a laranja (orange.png)!" << endl;
         return -1;
@@ -68,28 +68,39 @@ int main()
     while (estado != SAIR) {
         if (estado == MENU) {
             // desenha menu do tamanho da camera
-            Mat menu(camHeight, camWidth, CV_8UC3, Scalar(255, 0, 0));
+            Mat menu(camHeight, camWidth, CV_8UC3, Scalar(0, 0, 0));
 
             // Título
             putText(menu, "Sobrevivendo Ao Fim Do Periodo",
-                    Point(camWidth/4 - 35, camHeight/4),
-                    FONT_HERSHEY_SIMPLEX, 2.0,
+                    Point(camWidth * 0.25 - 35, camHeight * 0.25),
+                    FONT_HERSHEY_TRIPLEX , 2.0,
                     Scalar(255, 255, 255), 3);
 
-            // Botão Jogar
-            botaoJogar = Rect(camWidth/2 - 100, camHeight/2 - 50, 200, 60);
-            rectangle(menu, botaoJogar, Scalar(0, 255, 255), 2); //Cor da borda
-            putText(menu, "Jogar",
-                    Point(botaoJogar.x + 50, botaoJogar.y + 40),
-                    FONT_HERSHEY_SIMPLEX, 1.0,
+            botaoJogar = Rect(camWidth * 0.5 - 90, camHeight * 0.5 - 50, 240, 60);
+            rectangle(menu, botaoJogar, Scalar(255, 255, 255), 2); //Cor da borda
+            putText(menu, "Play",
+                    Point(botaoJogar.x + 85, botaoJogar.y + 40),
+                    FONT_HERSHEY_TRIPLEX , 1.0,
                     Scalar(255, 255, 255), 2); //Cor do nome
 
-            // Botão Sair
-            botaoSair = Rect(camWidth/2 - 100, camHeight/2 + 50, 200, 60);
+            botaoOpcoes = Rect(camWidth * 0.5 - 90, camHeight * 0.5 + 50, 240, 60);
+            rectangle(menu, botaoOpcoes, Scalar(255, 255, 255), 2);
+            putText(menu, "Options",
+                    Point(botaoOpcoes.x + 55, botaoOpcoes.y + 40),
+                    FONT_HERSHEY_TRIPLEX , 1.0,
+                    Scalar(255, 255, 255), 2);
+            botaoDesc = Rect(camWidth * 0.5 - 90, camHeight * 0.5 + 150, 240, 60);
+            rectangle(menu, botaoDesc, Scalar(255, 255, 255), 2);
+            putText(menu, "Description",
+                    Point(botaoDesc.x + 20, botaoDesc.y + 40),
+                    FONT_HERSHEY_TRIPLEX , 1.0,
+                    Scalar(255, 255, 255), 2);
+                
+            botaoSair = Rect(camWidth * 0.5 - 90, camHeight * 0.5 + 250, 240, 60);
             rectangle(menu, botaoSair, Scalar(255, 255, 255), 2);
-            putText(menu, "Sair",
-                    Point(botaoSair.x + 60, botaoSair.y + 40),
-                    FONT_HERSHEY_SIMPLEX, 1.0,
+            putText(menu, "Exit",
+                    Point(botaoSair.x + 75, botaoSair.y + 40),
+                    FONT_HERSHEY_TRIPLEX , 1.0,
                     Scalar(255, 255, 255), 2);
 
             imshow(wName, menu);
@@ -106,6 +117,25 @@ int main()
             char key = (char)waitKey(10);
             if (key == 27) estado = SAIR; // ESC fecha
             if (key == 'm') estado = MENU; // M retorna ao menu
+        }
+        else if (estado == OPTIONS){
+            Mat options(camHeight, camWidth, CV_8UC3, Scalar(0, 0, 0));
+
+            putText(options, "Description",
+                Point(camWidth * 0.25 + 200, camHeight * 0.25),
+                FONT_HERSHEY_TRIPLEX , 2.0,
+                Scalar(255, 255, 255), 3);
+
+            botaoLeave = Rect(camWidth * 0.5 - 90, camHeight * 0.5 + 250, 240, 60);
+            rectangle(options, botaoLeave, Scalar(255, 255, 255), 2);
+            putText(options, "Leave",
+            Point(botaoLeave.x + 50, botaoLeave.y + 40),
+            FONT_HERSHEY_TRIPLEX, 2.0,
+            Scalar(255, 255, 255), 3);
+
+            imshow(wName, options);
+            int key = waitKey(30);
+            if (key == 27) estado = SAIR;
         }
     }
 
@@ -170,6 +200,16 @@ void mouseCallback(int event, int x, int y, int, void*) {
         if (botaoSair.contains(Point(x, y))) {
             cout << "Sair clicado!" << endl;
             estado = SAIR;
+        }
+        if (botaoOpcoes.contains(Point(x, y))) {
+            cout << "Options clicado!" << endl;
+            estado = OPTIONS;
+        }
+    }
+    if(estado == OPTIONS && event == EVENT_LBUTTONDOWN){
+        if (botaoLeave.contains(Point(x, y))){
+        cout << "Leave clicado!" << endl;
+        estado = MENU;
         }
     }
 }
