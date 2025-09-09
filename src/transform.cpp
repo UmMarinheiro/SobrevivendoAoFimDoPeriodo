@@ -58,19 +58,15 @@ std::pair<float, float> Transform::posLocalToGlobal(std::pair<float, float> loca
 {
     if(parent == nullptr) return posLocalToParent(localPos); //MELHORAR
     
-    Transform &parentRef = *parent;
     std::pair<float, float> posInParent = posLocalToParent(localPos);
-    
-    return parentRef.posLocalToGlobal(posInParent);
+    return parent->posLocalToGlobal(posInParent);
 }
 std::pair<float, float> Transform::posGlobalToLocal(std::pair<float, float> globalPos) 
 {
     if(parent == nullptr) return posParentToLocal(globalPos); //MELHORAR
 
-    Transform &parentRef = *parent;
-    std::pair<float, float> posInParent = parentRef.posGlobalToLocal(globalPos);
-    pair<float, float> localPos = posParentToLocal(posInParent);
-    return localPos;
+    std::pair<float, float> posInParent = parent->posGlobalToLocal(globalPos);
+    return posParentToLocal(posInParent);
 }
 
 
@@ -78,38 +74,30 @@ std::pair<float, float> Transform::sizeLocalToGlobal(std::pair<float, float> loc
 {
     if(parent == nullptr) return sizeLocalToParent(localSize); //MELHORAR
     
-    Transform &parentRef = *parent;
     std::pair<float, float> sizeInParent = sizeLocalToParent(localSize);
-    
-    return parentRef.sizeLocalToGlobal(sizeInParent);
+    return parent->sizeLocalToGlobal(sizeInParent);
 }
 std::pair<float, float> Transform::sizeGlobalToLocal(std::pair<float, float> globalSize) 
 {
     if(parent == nullptr) return sizeParentToLocal(globalSize); //MELHORAR
     
-    Transform &parentRef = *parent;
-    std::pair<float, float> sizeInParent = parentRef.sizeGlobalToLocal(globalSize);
-    pair<float, float> localSize = sizeParentToLocal(sizeInParent);
-    return localSize;
+    std::pair<float, float> sizeInParent = parent->sizeGlobalToLocal(globalSize);
+    return sizeParentToLocal(sizeInParent);;
 }
 
 float Transform::rotationLocalToGlobal(float localRotation) 
 {   
     if(parent == nullptr) return rotationLocalToParent(localRotation); //MELHORAR
     
-    Transform &parentRef = *parent;
     float rotationInParent = rotationLocalToParent(localRotation);
-    
-    return parentRef.rotationLocalToGlobal(rotationInParent);
+    return parent->rotationLocalToGlobal(rotationInParent);
 }
 float Transform::rotationGlobalToLocal(float globalRotation) 
 {
     if(parent == nullptr) return rotationParentToLocal(globalRotation); //MELHORAR
     
-    Transform &parentRef = *parent;
-    float rotationInParent = parentRef.rotationGlobalToLocal(globalRotation);
-    float localRotation = rotationParentToLocal(rotationInParent);
-    return localRotation; 
+    float rotationInParent = parent->rotationGlobalToLocal(globalRotation);
+    return rotationParentToLocal(rotationInParent); 
 }
 
 std::pair<float, float> Transform::applyTranslation(std::pair<float, float> origin, std::pair<float, float> vec) 
