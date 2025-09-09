@@ -25,10 +25,11 @@ public:
     {
         //getParent()->setLocalSize({1, 1+t/100});
 
-        pair<float, float> nSize = {10*cos(t)+100,10*sin(t)+100};
-        setGlobalSize(nSize);
+        // pair<float, float> nSize = {10*cos(t)+100,10*sin(t)+100};
+        // setGlobalSize(nSize);
 
-        getParent()->setLocalRotation(4*t);
+        getParent()->rotate(4);
+        rotate(1);
 
         getParent()->getParent()->translate(speed);
 
@@ -128,6 +129,7 @@ int main( int argc, const char** argv )
     o->setParent(p);
     p->setParent(pp);
     o->setLocalPos({100,0});
+    o->setGlobalSize({100,100});
 
     o->log();
     

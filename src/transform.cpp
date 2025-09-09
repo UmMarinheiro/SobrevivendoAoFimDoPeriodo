@@ -51,7 +51,7 @@ void Transform::translate(std::pair<float, float> translation)
 }
 void Transform::rotate(float angle)
 {
-    setGlobalRotation(getGlobalRotation() + angle);
+    setLocalRotation(getLocalRotation() + angle);
 }
 
 std::pair<float, float> Transform::posLocalToGlobal(std::pair<float, float> localPos) 
