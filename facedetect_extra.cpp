@@ -23,10 +23,10 @@ public:
     float t = 0;
     void update()
     {
-        //getParent()->setLocalSize({1, 1+t/100});
+        //getParent()->setLocalSize({1+t/100, 1+t/100});
 
-        // pair<float, float> nSize = {10*cos(t)+100,10*sin(t)+100};
-        // setGlobalSize(nSize);
+        pair<float, float> nSize = {10*cos(t)+100,10*sin(t)+100};
+        setGlobalSize(nSize);
 
         getParent()->rotate(4);
 
@@ -105,7 +105,7 @@ public:
         double scale = 1.0;
         
         // Get the 2x3 rotation matrix
-        cv::Mat rotation_matrix = cv::getRotationMatrix2D(center, rot, scale);
+        cv::Mat rotation_matrix = cv::getRotationMatrix2D(center, -rot, scale);
         
         // Apply the affine transformation (rotate the image)
         cv::warpAffine(img, img, rotation_matrix, cv::Size(width, height));
@@ -126,8 +126,8 @@ int main( int argc, const char** argv )
     o->speed.first = 2;
     o->speed.second = 0;
     p->setLocalPos({300,300});
-    o->setParent(p);
-    p->setParent(pp);
+    o->changeParent(p);
+    p->changeParent(pp);
     o->setLocalPos({100,0});
     o->setGlobalSize({100,100});
 
