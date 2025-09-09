@@ -43,11 +43,11 @@ void Transform::setGlobalRotation(float globalRotation)
 
 void Transform::translate(std::pair<float, float> translation) 
 {
-    std::pair<float, float> globalPos = getGlobalPos();
-    globalPos.first += translation.first;
-    globalPos.second += translation.second;
+    std::pair<float, float> localPos = getLocalPos();
+    localPos.first += translation.first;
+    localPos.second += translation.second;
     
-    setGlobalPos(globalPos);
+    setLocalPos(localPos);
 }
 void Transform::rotate(float angle)
 {
