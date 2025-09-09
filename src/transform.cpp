@@ -90,7 +90,6 @@ std::pair<float, float> Transform::sizeGlobalToLocal(std::pair<float, float> glo
     return localSize;
 }
 
-//------------------------------------------------------ TODO
 float Transform::rotationGlobalToLocal(float globalRotation) 
 {
     if(parent == nullptr) return rotationParentToLocal(globalRotation); //MELHORAR
@@ -110,7 +109,6 @@ float Transform::rotationLocalToGlobal(float localRotation)
     return parentRef.rotationLocalToGlobal(rotationInParent);
 }
 
-// ------------------------------------------------------------ TODO END
 
 
 std::pair<float, float> Transform::applyTranslation(std::pair<float, float> origin, std::pair<float, float> vec) 
@@ -129,8 +127,8 @@ std::pair<float, float> Transform::applyScaling(std::pair<float, float> size, st
 }
 std::pair<float, float> Transform::applyRotation(float rotation, std::pair<float, float> vec) 
 {
-    float sinRot = std::sin(rotation);
-    float cosRot = std::cos(rotation);
+    float sinRot = std::sin(M_PI * rotation/180);
+    float cosRot = std::cos(M_PI * rotation/180);
     
     return {
         vec.first * cosRot - vec.second * sinRot, 
@@ -153,8 +151,8 @@ std::pair<float, float> Transform::removeScaling(std::pair<float, float> size, s
 }
 std::pair<float, float> Transform::removeRotation(float rotation, std::pair<float, float> vec) 
 {
-    float sinRot = std::sin(rotation);
-    float cosRot = std::cos(rotation);
+    float sinRot = std::sin(M_PI * rotation/180);
+    float cosRot = std::cos(M_PI * rotation/180);
     
     return {
         vec.first * cosRot + vec.second * sinRot,
@@ -198,7 +196,6 @@ std::pair<float, float> Transform::sizeParentToLocal(std::pair<float, float> par
     };
 }
 
-// ------------------------------------------------------------ TODO
 float Transform::rotationLocalToParent(float localRotation) 
 {
     return localRotation + rotation;
@@ -207,4 +204,3 @@ float Transform::rotationParentToLocal(float parentRotation)
 {
     return parentRotation - rotation;
 }
-// ------------------------------------------------------------ TODO END

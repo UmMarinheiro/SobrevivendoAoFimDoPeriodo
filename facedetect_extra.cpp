@@ -23,8 +23,12 @@ public:
     float t = 0;
     void update()
     {
-        pair<float, float> nSize = {cos(t)+10,sin(t)+10};
-        getParent()->setGlobalSize(nSize);
+        getParent()->setLocalSize({1, 1+t/100});
+
+        pair<float, float> nSize = {10*cos(t)+100,10*sin(t)+100};
+        setGlobalSize(nSize);
+
+        getParent()->setLocalRotation(4*t);
 
         t++;
         log();
@@ -42,6 +46,8 @@ public:
         cout<<" LocalSize: "<<v.first<<", "<<v.second<<endl;
         v = getGlobalSize();
         cout<<" globalSize: "<<v.first<<", "<<v.second<<endl;
+        cout<<" ParentLocalRotation"<<getLocalRotation()<<endl;
+        cout<<" ParentGlobalRotation"<<getGlobalRotation()<<endl;
 
         cout<<"Parent: "<<endl;
         v = getParent()->getLocalPos();
@@ -50,9 +56,11 @@ public:
         cout<<" ParentGlobalPos: "<<v.first<<", "<<v.second<<endl;
 
         v = getParent()->getLocalSize();
-        cout<<" LocalSize: "<<v.first<<", "<<v.second<<endl;
+        cout<<" ParentLocalSize: "<<v.first<<", "<<v.second<<endl;
         v = getParent()->getGlobalSize();
-        cout<<" globalSize: "<<v.first<<", "<<v.second<<endl;
+        cout<<" ParentGlobalSize: "<<v.first<<", "<<v.second<<endl;
+        cout<<" ParentLocalRotation"<<getParent()->getLocalRotation()<<endl;
+        cout<<" ParentGlobalRotation"<<getParent()->getGlobalRotation()<<endl;
         cout<<endl;
     }
     void draw(Mat smallFrame)
@@ -63,9 +71,27 @@ public:
         // if (img.rows > 200 || img.cols > 200)
         auto pos = getGlobalPos();
         auto size = getGlobalSize();
+        auto rot = getGlobalRotation();
 
         pos.first -= size.first/2;
         pos.second -= size.second/2;
+
+
+        // Get image dimensions
+        int height = img.rows;
+        int width = img.cols;
+        
+        // Define the rotation center (usually the center of the image)
+        cv::Point2f center(width / 2.0f, height / 2.0f);
+        
+        // Define the scale factor (1.0 = no scaling)
+        double scale = 1.0;
+        
+        // Get the 2x3 rotation matrix
+        cv::Mat rotation_matrix = cv::getRotationMatrix2D(center, rot, scale);
+        
+        // Apply the affine transformation (rotate the image)
+        cv::warpAffine(img, img, rotation_matrix, cv::Size(width, height));
 
         resize(img, img, Size(size.first, size.second));
         drawImage(smallFrame, img, pos.first, pos.second);
@@ -83,8 +109,7 @@ int main( int argc, const char** argv )
     o->speed.second = 1;
     p->setLocalPos({300,300});
     o->setParent(p);
-    o->setLocalPos({0,0});
-    o->setLocalSize({10,10});
+    o->setLocalPos({100,0});
 
     o->log();
     
