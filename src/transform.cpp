@@ -100,7 +100,7 @@ float Transform::rotationGlobalToLocal(float globalRotation)
     Transform &parentRef = *parent;
     float rotationInParent = parentRef.rotationGlobalToLocal(globalRotation);
     float localRotation = rotationParentToLocal(rotationInParent);
-    return rotationInParent;
+    return localRotation;
 }
 float Transform::rotationLocalToGlobal(float localRotation) 
 {   

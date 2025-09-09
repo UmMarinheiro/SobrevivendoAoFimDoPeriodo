@@ -23,14 +23,14 @@ public:
     float t = 0;
     void update()
     {
-        getParent()->setLocalSize({1, 1+t/100});
+        //getParent()->setLocalSize({1, 1+t/100});
 
         pair<float, float> nSize = {10*cos(t)+100,10*sin(t)+100};
         setGlobalSize(nSize);
 
         getParent()->setLocalRotation(4*t);
 
-        getParent()->translate(speed);
+        getParent()->getParent()->translate(speed);
 
         t++;
         log();
@@ -48,8 +48,8 @@ public:
         cout<<" LocalSize: "<<v.first<<", "<<v.second<<endl;
         v = getGlobalSize();
         cout<<" globalSize: "<<v.first<<", "<<v.second<<endl;
-        cout<<" ParentLocalRotation"<<getLocalRotation()<<endl;
-        cout<<" ParentGlobalRotation"<<getGlobalRotation()<<endl;
+        cout<<" LocalRotation"<<getLocalRotation()<<endl;
+        cout<<" GlobalRotation"<<getGlobalRotation()<<endl;
 
         cout<<"Parent: "<<endl;
         v = getParent()->getLocalPos();
@@ -63,6 +63,20 @@ public:
         cout<<" ParentGlobalSize: "<<v.first<<", "<<v.second<<endl;
         cout<<" ParentLocalRotation"<<getParent()->getLocalRotation()<<endl;
         cout<<" ParentGlobalRotation"<<getParent()->getGlobalRotation()<<endl;
+        
+        
+        cout<<"ParentParent: "<<endl;
+        v = getParent()->getParent()->getLocalPos();
+        cout<<" ParentLocalPos: "<<v.first<<", "<<v.second<<endl;
+        v = getParent()->getParent()->getGlobalPos();
+        cout<<" ParentGlobalPos: "<<v.first<<", "<<v.second<<endl;
+
+        v = getParent()->getParent()->getLocalSize();
+        cout<<" ParentLocalSize: "<<v.first<<", "<<v.second<<endl;
+        v = getParent()->getParent()->getGlobalSize();
+        cout<<" ParentGlobalSize: "<<v.first<<", "<<v.second<<endl;
+        cout<<" ParentLocalRotation"<<getParent()->getParent()->getLocalRotation()<<endl;
+        cout<<" ParentGlobalRotation"<<getParent()->getParent()->getGlobalRotation()<<endl;
         cout<<endl;
     }
     void draw(Mat smallFrame)
@@ -105,12 +119,14 @@ Orange* o;
 int main( int argc, const char** argv )
 {
     Transform* p = new Transform();
+    Transform* pp = new Transform();
     o = new Orange();
     o->file = "orange.png";
-    o->speed.first = 1;
-    o->speed.second = 1;
+    o->speed.first = 2;
+    o->speed.second = 0;
     p->setLocalPos({300,300});
     o->setParent(p);
+    p->setParent(pp);
     o->setLocalPos({100,0});
 
     o->log();
@@ -164,6 +180,7 @@ int main( int argc, const char** argv )
     }
     delete o;
     delete p;
+    delete pp;
     return 0;
 }
 
