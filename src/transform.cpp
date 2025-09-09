@@ -48,8 +48,11 @@ void Transform::translate(std::pair<float, float> translation)
     globalPos.second += translation.second;
     
     setGlobalPos(globalPos);
-};
-
+}
+void Transform::rotate(float angle)
+{
+    setGlobalRotation(getGlobalRotation() + angle);
+}
 
 std::pair<float, float> Transform::posLocalToGlobal(std::pair<float, float> localPos) 
 {

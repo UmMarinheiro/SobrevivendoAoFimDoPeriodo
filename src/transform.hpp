@@ -33,6 +33,7 @@ public:
     void setGlobalRotation(float globalRotation);
     
     void translate(std::pair<float, float> translation);
+    void rotate(float rotation);
 
     std::pair<float, float> posLocalToGlobal(std::pair<float, float> localPos);
     std::pair<float, float> sizeLocalToGlobal(std::pair<float, float> localSize);

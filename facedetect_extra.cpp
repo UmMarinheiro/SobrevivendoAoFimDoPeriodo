@@ -30,6 +30,8 @@ public:
 
         getParent()->setLocalRotation(4*t);
 
+        getParent()->translate(speed);
+
         t++;
         log();
     }
