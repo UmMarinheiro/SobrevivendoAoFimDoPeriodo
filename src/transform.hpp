@@ -8,11 +8,11 @@
 class Transform
 {
 private:
-    Transform *parent = nullptr; // SUBSTITUIR POR SMART_POINTER
+    Transform *parent = nullptr;
     std::set<Transform*> children;
     
+    // ATRIBUTOS DESSE TRANSFORM 
     // MEDIDOS NO REFERENCIAL DO PAI
-    // NESSE REFERENCIAL ELES SAO TERMOS IDENTIDADE
     std::pair<float, float> pos = IDENTITY_POS; 
     std::pair<float, float> size = IDENTITY_SIZE;
     float rotation = IDENTITY_ROTATION;

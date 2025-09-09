@@ -79,30 +79,29 @@ void Transform::rotate(float angle)
 
 std::pair<float, float> Transform::posLocalToGlobal(std::pair<float, float> localPos) 
 {
-    if(parent == nullptr) return posLocalToParent(localPos); //MELHORAR
+    if(parent == nullptr) return posLocalToParent(localPos); 
     
     std::pair<float, float> posInParent = posLocalToParent(localPos);
     return parent->posLocalToGlobal(posInParent);
 }
 std::pair<float, float> Transform::posGlobalToLocal(std::pair<float, float> globalPos) 
 {
-    if(parent == nullptr) return posParentToLocal(globalPos); //MELHORAR
+    if(parent == nullptr) return posParentToLocal(globalPos); 
 
     std::pair<float, float> posInParent = parent->posGlobalToLocal(globalPos);
     return posParentToLocal(posInParent);
 }
 
-
 std::pair<float, float> Transform::sizeLocalToGlobal(std::pair<float, float> localSize) 
 {
-    if(parent == nullptr) return sizeLocalToParent(localSize); //MELHORAR
+    if(parent == nullptr) return sizeLocalToParent(localSize); 
     
     std::pair<float, float> sizeInParent = sizeLocalToParent(localSize);
     return parent->sizeLocalToGlobal(sizeInParent);
 }
 std::pair<float, float> Transform::sizeGlobalToLocal(std::pair<float, float> globalSize) 
 {
-    if(parent == nullptr) return sizeParentToLocal(globalSize); //MELHORAR
+    if(parent == nullptr) return sizeParentToLocal(globalSize); 
     
     std::pair<float, float> sizeInParent = parent->sizeGlobalToLocal(globalSize);
     return sizeParentToLocal(sizeInParent);;
@@ -110,14 +109,14 @@ std::pair<float, float> Transform::sizeGlobalToLocal(std::pair<float, float> glo
 
 float Transform::rotationLocalToGlobal(float localRotation) 
 {   
-    if(parent == nullptr) return rotationLocalToParent(localRotation); //MELHORAR
+    if(parent == nullptr) return rotationLocalToParent(localRotation); 
     
     float rotationInParent = rotationLocalToParent(localRotation);
     return parent->rotationLocalToGlobal(rotationInParent);
 }
 float Transform::rotationGlobalToLocal(float globalRotation) 
 {
-    if(parent == nullptr) return rotationParentToLocal(globalRotation); //MELHORAR
+    if(parent == nullptr) return rotationParentToLocal(globalRotation); 
     
     float rotationInParent = parent->rotationGlobalToLocal(globalRotation);
     return rotationParentToLocal(rotationInParent); 
