@@ -134,8 +134,8 @@ std::pair<float, float> Transform::applyRotation(float rotation, std::pair<float
     float cosRot = std::cos(M_PI * rotation/180);
     
     return {
-        vec.first * cosRot - vec.second * sinRot, 
-        vec.first * sinRot + vec.second * cosRot};
+        vec.first * cosRot + vec.second * sinRot, 
+        - vec.first * sinRot + vec.second * cosRot};
     }
     
 std::pair<float, float> Transform::removeTranslation(std::pair<float, float> origin, std::pair<float, float> vec) 
@@ -158,8 +158,8 @@ std::pair<float, float> Transform::removeRotation(float rotation, std::pair<floa
     float cosRot = std::cos(M_PI * rotation/180);
     
     return {
-        vec.first * cosRot + vec.second * sinRot,
-        - vec.first * sinRot + vec.second * cosRot,
+        vec.first * cosRot - vec.second * sinRot,
+        vec.first * sinRot + vec.second * cosRot,
     };
 }
 
@@ -201,9 +201,9 @@ std::pair<float, float> Transform::sizeParentToLocal(std::pair<float, float> par
 
 float Transform::rotationLocalToParent(float localRotation) 
 {
-    return localRotation + rotation;
+    return localRotation - rotation;
 }
 float Transform::rotationParentToLocal(float parentRotation) 
 {
-    return parentRotation - rotation;
+    return parentRotation + rotation;
 }

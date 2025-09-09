@@ -29,7 +29,7 @@ public:
         // setGlobalSize(nSize);
 
         getParent()->rotate(4);
-        rotate(1);
+
 
         getParent()->getParent()->translate(speed);
 
