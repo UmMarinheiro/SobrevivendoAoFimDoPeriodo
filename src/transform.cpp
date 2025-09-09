@@ -4,13 +4,36 @@
 using namespace std;
 
 
-Transform* Transform::getParent(){return parent;}
+Transform::Transform(Transform *parent, std::pair<float, float> pos, 
+    std::pair<float, float> size,float rotation)
+{
+    this->parent = parent;
+    if(this->parent != nullptr) this->parent->addChild(this);
+
+    setLocalPos(pos);
+    setLocalSize(size);
+    setLocalRotation(rotation);
+}
+
+void Transform::addChild(Transform* toAdd) {children.insert(toAdd);}
+void Transform::removeChild(Transform* toRemove) {children.erase(toRemove);}
+
+Transform* Transform::getParent() {return parent;}
 void Transform::changeParent(Transform *newParent)
 {
     std::pair<float, float> globalPos = getGlobalPos();
+    if(this->parent!=nullptr) parent->removeChild(this);
+
     this->parent = newParent;
+    if(newParent!=nullptr) parent->addChild(this);
     
     setGlobalPos(globalPos);
+}
+
+Transform::~Transform()
+{
+    for(Transform* child : children) delete child;
+    if(parent!=nullptr) parent->removeChild(this);
 }
 
 std::pair<float, float > Transform::getLocalPos() {return this->pos;}

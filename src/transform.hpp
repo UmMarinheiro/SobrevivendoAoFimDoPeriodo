@@ -1,3 +1,4 @@
+#include <set>
 #include <utility>
 
 #define IDENTITY_POS {0,0}
@@ -8,6 +9,7 @@ class Transform
 {
 private:
     Transform *parent = nullptr; // SUBSTITUIR POR SMART_POINTER
+    std::set<Transform*> children;
     
     // MEDIDOS NO REFERENCIAL DO PAI
     // NESSE REFERENCIAL ELES SAO TERMOS IDENTIDADE
@@ -16,9 +18,18 @@ private:
     float rotation = IDENTITY_ROTATION;
     
 public:
+    Transform(Transform *parent = nullptr, 
+        std::pair<float, float> pos = IDENTITY_POS, 
+        std::pair<float, float> size = IDENTITY_SIZE,
+        float rotation = IDENTITY_ROTATION);
+        
     Transform *getParent();
     void changeParent(Transform *newParent);
-
+    void addChild(Transform* toAdd);
+    void removeChild(Transform* toRemove);
+    
+    virtual ~Transform();
+    
     std::pair<float, float > getLocalPos();
     std::pair<float, float > getLocalSize();
     float getLocalRotation();
