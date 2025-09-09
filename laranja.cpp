@@ -13,7 +13,7 @@ void overlayImage(Mat &background, Mat &foreground, Point location);
 void mouseCallback(int event, int x, int y, int, void* userdata);
 
 // --- Estados do jogo ---
-enum Estado { MENU, JOGO, SAIR, OPTIONS, DESC };
+enum Estado { MENU, JOGO, SAIR, OPTIONS, DESC }; //TODO -pause é estado a parte ou parte de jogo
 Estado estado;
 // --- Variáveis globais ---
 string cascadeName;
@@ -29,8 +29,8 @@ VideoCapture capture;
 int main()
 {
     //--- Abrir câmera ---
-    if(!capture.open("video.mp4")) // para testar com um video
-    //capture.open(0);
+    //if(!capture.open("video.mp4")) // para testar com um video
+    capture.open(0);
     if (!capture.isOpened()) {
         cout << "Erro ao abrir a câmera!" << endl;
         return -1;
@@ -121,7 +121,7 @@ int main()
         else if (estado == OPTIONS){
             Mat options(camHeight, camWidth, CV_8UC3, Scalar(0, 0, 0));
 
-            putText(options, "Description",
+            putText(options, "Options",
                 Point(camWidth * 0.25 + 200, camHeight * 0.25),
                 FONT_HERSHEY_TRIPLEX , 2.0,
                 Scalar(255, 255, 255), 3);
@@ -129,11 +129,30 @@ int main()
             botaoLeave = Rect(camWidth * 0.5 - 90, camHeight * 0.5 + 250, 240, 60);
             rectangle(options, botaoLeave, Scalar(255, 255, 255), 2);
             putText(options, "Leave",
-            Point(botaoLeave.x + 50, botaoLeave.y + 40),
-            FONT_HERSHEY_TRIPLEX, 2.0,
+            Point(botaoLeave.x + 70, botaoLeave.y + 40),
+            FONT_HERSHEY_TRIPLEX, 1.0,
             Scalar(255, 255, 255), 3);
 
             imshow(wName, options);
+            int key = waitKey(30);
+            if (key == 27) estado = SAIR;
+        }
+        else if (estado == DESC){
+            Mat desc(camHeight, camWidth, CV_8UC3, Scalar(0, 0, 0));
+
+            putText(desc, "Description",
+                Point(camWidth * 0.25 + 200, camHeight * 0.25),
+                FONT_HERSHEY_TRIPLEX , 1.0,
+                Scalar(255, 255, 255), 3);
+
+            botaoLeave = Rect(camWidth * 0.5 - 90, camHeight * 0.5 + 250, 240, 60);
+            rectangle(desc, botaoLeave, Scalar(255, 255, 255), 2);
+            putText(desc, "Leave",
+            Point(botaoLeave.x + 70, botaoLeave.y + 40),
+            FONT_HERSHEY_TRIPLEX, 1.0,
+            Scalar(255, 255, 255), 3);
+
+            imshow(wName, desc);
             int key = waitKey(30);
             if (key == 27) estado = SAIR;
         }
@@ -205,10 +224,20 @@ void mouseCallback(int event, int x, int y, int, void*) {
             cout << "Options clicado!" << endl;
             estado = OPTIONS;
         }
+        if(botaoDesc.contains(Point(x, y))){
+            cout << "Description clicado!" << endl;
+            estado = DESC;
+        }
     }
     if(estado == OPTIONS && event == EVENT_LBUTTONDOWN){
         if (botaoLeave.contains(Point(x, y))){
-        cout << "Leave clicado!" << endl;
+        cout << "Leave options clicado!" << endl;
+        estado = MENU;
+        }
+    }
+    if(estado == DESC && event == EVENT_LBUTTONDOWN){
+        if(botaoLeave.contains(Point(x, y))){
+        cout << "Leave desc clicado!" << endl;
         estado = MENU;
         }
     }
