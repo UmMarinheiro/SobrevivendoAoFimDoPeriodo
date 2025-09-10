@@ -2,7 +2,7 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
-#include "src/transform.hpp"
+#include "transform.hpp"
 #include <cstdio>
 #include <iostream>
 
@@ -122,7 +122,7 @@ int main( int argc, const char** argv )
     Transform* p = new Transform();
     Transform* pp = new Transform();
     o = new Orange();
-    o->file = "orange.png";
+    o->file = "assets/orange.png";
     o->speed.first = 2;
     o->speed.second = 0;
     p->setLocalPos({300,300});
@@ -140,7 +140,7 @@ int main( int argc, const char** argv )
     double scale;
     char key = 0;
 
-    cascadeName = "haarcascade_frontalface_default.xml";
+    cascadeName = "config/haarcascade_frontalface_default.xml";
     scale = 2; // usar 1, 2, 4.
     if (scale < 1)
         scale = 1;
@@ -151,7 +151,7 @@ int main( int argc, const char** argv )
         return -1;
     }
 
-    if(!capture.open("video.mp4")) // para testar com um video
+    if(!capture.open("assets/video.mp4")) // para testar com um video
     // if(!capture.open(0)) // para testar com a webcam
     {
         cout << "Capture from camera #0 didn't work" << endl;
