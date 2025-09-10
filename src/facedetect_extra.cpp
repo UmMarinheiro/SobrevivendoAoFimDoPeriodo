@@ -2,9 +2,11 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
+#include "sprite.hpp"
 #include "transform.hpp"
 #include <cstdio>
 #include <iostream>
+#include <string>
 
 using namespace std;
 using namespace cv;
@@ -14,24 +16,24 @@ void detectAndDraw( Mat& frame, CascadeClassifier& cascade, double scale, bool t
 string cascadeName;
 string wName = "Game";
 void drawImage(Mat frame, Mat img, int xPos, int yPos);
-class Orange : public Transform
+class Orange : public Sprite
 {
 public:
     std::pair<float, float> speed;
     
-    string file;
     float t = 0;
+    Orange(std::string asset) : Sprite(asset) {}
     void update()
     {
         //getParent()->setLocalSize({1+t/100, 1+t/100});
 
-        pair<float, float> nSize = {10*cos(t)+100,10*sin(t)+100};
+        pair<float, float> nSize = {1-t/100,1};
         setGlobalSize(nSize);
 
-        getParent()->rotate(4);
+        //getParent()->rotate(10);
 
 
-        getParent()->getParent()->translate(speed);
+        //getParent()->getParent()->translate(speed);
 
         t++;
         log();
@@ -80,39 +82,14 @@ public:
         cout<<" ParentGlobalRotation"<<getParent()->getParent()->getGlobalRotation()<<endl;
         cout<<endl;
     }
-    void draw(Mat smallFrame)
+    Rect getRect() 
     {
-        // Desenha uma imagem
-        Mat img = imread(file, IMREAD_UNCHANGED), img2;
-        //printf("img::width: %d, height=%d\n", img.cols, img.rows );
-        // if (img.rows > 200 || img.cols > 200)
-        auto pos = getGlobalPos();
-        auto size = getGlobalSize();
-        auto rot = getGlobalRotation();
+        std::pair<float,float> pos = getGlobalPos();
+        std::pair<float,float> size = getGlobalSize();
 
-        pos.first -= size.first/2;
-        pos.second -= size.second/2;
-
-
-        // Get image dimensions
-        int height = img.rows;
-        int width = img.cols;
-        
-        // Define the rotation center (usually the center of the image)
-        cv::Point2f center(width / 2.0f, height / 2.0f);
-        
-        // Define the scale factor (1.0 = no scaling)
-        double scale = 1.0;
-        
-        // Get the 2x3 rotation matrix
-        cv::Mat rotation_matrix = cv::getRotationMatrix2D(center, -rot, scale);
-        
-        // Apply the affine transformation (rotate the image)
-        cv::warpAffine(img, img, rotation_matrix, cv::Size(width, height));
-
-        resize(img, img, Size(size.first, size.second));
-        drawImage(smallFrame, img, pos.first, pos.second);
+        return Rect(pos.first, pos.second, size.first, size.second);
     }
+
 };
 
 Orange* o;
@@ -121,8 +98,7 @@ int main( int argc, const char** argv )
 {
     Transform* p = new Transform();
     Transform* pp = new Transform();
-    o = new Orange();
-    o->file = "assets/orange.png";
+    o = new Orange("assets/orange.png");
     o->speed.first = 2;
     o->speed.second = 0;
     p->setLocalPos({300,300});
@@ -253,7 +229,7 @@ void detectAndDraw( Mat& frame, CascadeClassifier& cascade, double scale, bool t
     {
         rectangle( smallFrame, Point(cvRound(r.x), cvRound(r.y)),
                     Point(cvRound((r.x + r.width-1)), cvRound((r.y + r.height-1))),
-                    color, 3);
+                    ((r & o->getRect()).area()>10)?Scalar(0,255,0):Scalar(255,0,0), 3);
     }
 
     o->draw(smallFrame);
