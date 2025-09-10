@@ -9,6 +9,7 @@ Sprite::Sprite(std::string asset)
 }
 void Sprite::draw(cv::Mat windowFrame)
 {
+    if(!isVisible)return;
     std::pair<float,float> pos = getGlobalPos();
     std::pair<float,float> size = getGlobalSize();
     float rot = getGlobalRotation();
@@ -18,6 +19,11 @@ void Sprite::draw(cv::Mat windowFrame)
     if(!applyRotationToImg(imgToDraw, rot))return;
     drawImageFromCenter(windowFrame, imgToDraw, pos.first, pos.second);
 }
+
+
+bool Sprite::getVisibility() {return isVisible;}
+void Sprite::setVisibility(bool newVisibility) {this->isVisible = newVisibility;}
+
 bool Sprite::applyScaleToImg(cv::Mat& toScale, std::pair<float,float> size)
 {
     std::pair<float, float> newSize = {std::abs(size.first)*toScale.cols, std::abs(size.second)*toScale.rows};

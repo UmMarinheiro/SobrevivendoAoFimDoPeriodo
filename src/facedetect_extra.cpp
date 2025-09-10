@@ -27,6 +27,8 @@ public:
     {
         //getParent()->setLocalSize({1+t/100, 1+t/100});
 
+        if((int)t % 50 < 25) setVisibility(false);
+        else setVisibility(true);
         pair<float, float> nSize = {1-t/100,1};
         setGlobalSize(nSize);
 

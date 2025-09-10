@@ -10,11 +10,16 @@
 
 class Sprite : public Transform
 {
-protected:
+private:
     cv::Mat img;
+    bool isVisible = true;
 public:
     Sprite(std::string asset);
     void draw(cv::Mat windowFrame);
+
+    bool getVisibility();
+    void setVisibility(bool newVisibility);
+
     static bool applyScaleToImg(cv::Mat& toScale, std::pair<float,float> size);
     static bool applyRotationToImg(cv::Mat& toRotate, float rot);
 
