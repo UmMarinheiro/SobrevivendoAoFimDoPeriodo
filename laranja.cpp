@@ -24,12 +24,32 @@ double scale = 1;
 
 CascadeClassifier cascade;
 Mat orange;
+Mat img;
 VideoCapture capture;
+
+void drawImage(Mat frame, Mat img, int xPos, int yPos) {
+    if (yPos + img.rows >= frame.rows || xPos + img.cols >= frame.cols || xPos <= 0 || yPos <= 0)
+        return;
+
+    Mat mask;
+    vector<Mat> layers;
+
+    split(img, layers); // seperate channels
+    if (layers.size() == 4) { // img com transparencia.
+        Mat rgb[3] = { layers[0],layers[1],layers[2] };
+        mask = layers[3]; // png's alpha channel used as mask
+        merge(rgb, 3, img);  // put together the RGB channels, now transp insn't transparent 
+        img.copyTo(frame.rowRange(yPos, yPos + img.rows).colRange(xPos, xPos + img.cols), mask);
+    } else {
+        img.copyTo(frame.rowRange(yPos, yPos + img.rows).colRange(xPos, xPos + img.cols));
+    }
+}
+float axys = 0.0;
 
 int main()
 {
     //--- Abrir câmera ---
-    //if(!capture.open("video.mp4")) // para testar com um video
+    if(!capture.open("video.mp4")) // para testar com um video
     capture.open(0);
     if (!capture.isOpened()) {
         cout << "Erro ao abrir a câmera!" << endl;
@@ -54,7 +74,7 @@ int main()
     }
 
     // --- Carregar sprite ---
-    orange = imread("naogrita.jpeg", IMREAD_UNCHANGED);
+    orange = imread("gato.png", IMREAD_COLOR);
     if (orange.empty()) {
         cout << "Erro ao carregar a laranja (orange.png)!" << endl;
         return -1;
@@ -155,6 +175,7 @@ int main()
             imshow(wName, desc);
             int key = waitKey(30);
             if (key == 27) estado = SAIR;
+
         }
     }
 
@@ -179,14 +200,39 @@ void detectAndDraw(Mat& frame, CascadeClassifier& cascade, double scale, bool tr
     cascade.detectMultiScale(grayFrame, faces,
         1.3, 2, 0 | CASCADE_SCALE_IMAGE, Size(40, 40));
 
+        static int mopa = 1;
+        static int tito = 5;
+    
+        Mat img = imread("orange.png", IMREAD_UNCHANGED), img2;
+        printf("img::width: %d, height=%d\n", img.cols, img.rows );
+        if (img.rows > 200 || img.cols > 200)
+            resize( img, img, Size(200, 200));
+        drawImage(smallFrame, img, mopa += tito, 300);
+        Rect recLaranja = Rect(mopa, 300, img.cols, img.rows);
+        if(mopa > smallFrame.cols - img.cols){
+            tito = -tito;
+        }
+
     // percorre as faces encontradas
     for (Rect r : faces) {
+
+        if((r & recLaranja).area() > 500){
+            Scalar(0,0,255);
+        }else{
+            Scalar(255,0,0);
+            rectangle( smallFrame, Point(cvRound(r.x), cvRound(r.y)),
+                    Point(cvRound((r.x + r.width-1)), cvRound((r.y + r.height-1))),
+                    Scalar(0,0,255), 3);
+        }
+
         Mat orange_resized;
         resize(orange, orange_resized, Size(r.width, r.height));
         overlayImage(smallFrame, orange_resized, Point(r.x, r.y));
     }
 
+
     imshow(wName, smallFrame);
+
 }
 
 // Sobreposição de imagem com alfa (PNG)
