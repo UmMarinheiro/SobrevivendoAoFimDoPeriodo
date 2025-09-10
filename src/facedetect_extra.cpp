@@ -2,6 +2,8 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
+#include "transform.hpp"
+#include <cstdio>
 #include <iostream>
 
 using namespace std;
@@ -11,9 +13,126 @@ void detectAndDraw( Mat& frame, CascadeClassifier& cascade, double scale, bool t
 
 string cascadeName;
 string wName = "Game";
+void drawImage(Mat frame, Mat img, int xPos, int yPos);
+class Orange : public Transform
+{
+public:
+    std::pair<float, float> speed;
+    
+    string file;
+    float t = 0;
+    void update()
+    {
+        //getParent()->setLocalSize({1+t/100, 1+t/100});
+
+        pair<float, float> nSize = {10*cos(t)+100,10*sin(t)+100};
+        setGlobalSize(nSize);
+
+        getParent()->rotate(4);
+
+
+        getParent()->getParent()->translate(speed);
+
+        t++;
+        log();
+    }
+    void log()
+    {
+        pair<float, float> v;
+        cout<<"Laranja: "<<endl;
+        v = getLocalPos();
+        cout<<" LocalPos: "<<v.first<<", "<<v.second<<endl;
+        v = getGlobalPos();
+        cout<<" globalPos: "<<v.first<<", "<<v.second<<endl;
+        
+        v = getLocalSize();
+        cout<<" LocalSize: "<<v.first<<", "<<v.second<<endl;
+        v = getGlobalSize();
+        cout<<" globalSize: "<<v.first<<", "<<v.second<<endl;
+        cout<<" LocalRotation"<<getLocalRotation()<<endl;
+        cout<<" GlobalRotation"<<getGlobalRotation()<<endl;
+
+        cout<<"Parent: "<<endl;
+        v = getParent()->getLocalPos();
+        cout<<" ParentLocalPos: "<<v.first<<", "<<v.second<<endl;
+        v = getParent()->getGlobalPos();
+        cout<<" ParentGlobalPos: "<<v.first<<", "<<v.second<<endl;
+
+        v = getParent()->getLocalSize();
+        cout<<" ParentLocalSize: "<<v.first<<", "<<v.second<<endl;
+        v = getParent()->getGlobalSize();
+        cout<<" ParentGlobalSize: "<<v.first<<", "<<v.second<<endl;
+        cout<<" ParentLocalRotation"<<getParent()->getLocalRotation()<<endl;
+        cout<<" ParentGlobalRotation"<<getParent()->getGlobalRotation()<<endl;
+        
+        
+        cout<<"ParentParent: "<<endl;
+        v = getParent()->getParent()->getLocalPos();
+        cout<<" ParentLocalPos: "<<v.first<<", "<<v.second<<endl;
+        v = getParent()->getParent()->getGlobalPos();
+        cout<<" ParentGlobalPos: "<<v.first<<", "<<v.second<<endl;
+
+        v = getParent()->getParent()->getLocalSize();
+        cout<<" ParentLocalSize: "<<v.first<<", "<<v.second<<endl;
+        v = getParent()->getParent()->getGlobalSize();
+        cout<<" ParentGlobalSize: "<<v.first<<", "<<v.second<<endl;
+        cout<<" ParentLocalRotation"<<getParent()->getParent()->getLocalRotation()<<endl;
+        cout<<" ParentGlobalRotation"<<getParent()->getParent()->getGlobalRotation()<<endl;
+        cout<<endl;
+    }
+    void draw(Mat smallFrame)
+    {
+        // Desenha uma imagem
+        Mat img = imread(file, IMREAD_UNCHANGED), img2;
+        //printf("img::width: %d, height=%d\n", img.cols, img.rows );
+        // if (img.rows > 200 || img.cols > 200)
+        auto pos = getGlobalPos();
+        auto size = getGlobalSize();
+        auto rot = getGlobalRotation();
+
+        pos.first -= size.first/2;
+        pos.second -= size.second/2;
+
+
+        // Get image dimensions
+        int height = img.rows;
+        int width = img.cols;
+        
+        // Define the rotation center (usually the center of the image)
+        cv::Point2f center(width / 2.0f, height / 2.0f);
+        
+        // Define the scale factor (1.0 = no scaling)
+        double scale = 1.0;
+        
+        // Get the 2x3 rotation matrix
+        cv::Mat rotation_matrix = cv::getRotationMatrix2D(center, -rot, scale);
+        
+        // Apply the affine transformation (rotate the image)
+        cv::warpAffine(img, img, rotation_matrix, cv::Size(width, height));
+
+        resize(img, img, Size(size.first, size.second));
+        drawImage(smallFrame, img, pos.first, pos.second);
+    }
+};
+
+Orange* o;
 
 int main( int argc, const char** argv )
 {
+    Transform* p = new Transform();
+    Transform* pp = new Transform();
+    o = new Orange();
+    o->file = "assets/orange.png";
+    o->speed.first = 2;
+    o->speed.second = 0;
+    p->setLocalPos({300,300});
+    o->changeParent(p);
+    p->changeParent(pp);
+    o->setLocalPos({100,0});
+    o->setGlobalSize({100,100});
+
+    o->log();
+    
     VideoCapture capture;
     Mat frame;
     bool tryflip;
@@ -51,7 +170,9 @@ int main( int argc, const char** argv )
             if (key == 0) // just first time
                 resizeWindow(wName, frame.cols/scale, frame.rows/scale);
 
-
+            o->update();
+            auto [x,y] = o->getGlobalPos();
+    
             detectAndDraw( frame, cascade, scale, tryflip );
 
             key = (char)waitKey(10);
@@ -59,7 +180,9 @@ int main( int argc, const char** argv )
                 break;
         }
     }
-
+    delete o;
+    delete p;
+    delete pp;
     return 0;
 }
 
@@ -72,7 +195,7 @@ int main( int argc, const char** argv )
  * @param yPos y position of the frame image where the image will start.
  */
 void drawImage(Mat frame, Mat img, int xPos, int yPos) {
-    if (yPos + img.rows >= frame.rows || xPos + img.cols >= frame.cols || xPos <= 0 || yPos <= 0)
+    if (yPos + img.rows >= frame.rows || xPos + img.cols >= frame.cols)
         return;
 
     Mat mask;
@@ -116,7 +239,7 @@ void detectAndDraw( Mat& frame, CascadeClassifier& cascade, double scale, bool t
     cvtColor( smallFrame, grayFrame, COLOR_BGR2GRAY );
     equalizeHist( grayFrame, grayFrame );
 
-    printf("smallFrame::width: %d, height=%d\n", smallFrame.cols, smallFrame.rows );
+    //printf("smallFrame::width: %d, height=%d\n", smallFrame.cols, smallFrame.rows );
 
     cascade.detectMultiScale( grayFrame, faces,
         1.3, 2, 0
@@ -133,13 +256,7 @@ void detectAndDraw( Mat& frame, CascadeClassifier& cascade, double scale, bool t
                     color, 3);
     }
 
-    // Desenha uma imagem
-    Mat img = imread("assets/orange.png", IMREAD_UNCHANGED), img2;
-    printf("img::width: %d, height=%d\n", img.cols, img.rows );
-    if (img.rows > 200 || img.cols > 200)
-        resize( img, img, Size(200, 200));
-    drawImage(smallFrame, img, 10, 150);
-
+    o->draw(smallFrame);
     // Desenha quadrados com transparencia
     double alpha = 0.3; // entre 0 e 1
     drawTransRect(smallFrame, Scalar(0,255,0), alpha, Rect(  0, 0, 200, 200));
