@@ -141,17 +141,17 @@ int main( int argc, const char** argv )
     char key = 0;
 
     cascadeName = "config/haarcascade_frontalface_default.xml";
-    scale = 2; // usar 1, 2, 4.
+    scale = 1; // usar 1, 2, 4.
     if (scale < 1)
         scale = 1;
-    tryflip = true;
+    tryflip = false;
 
     if (!cascade.load(cascadeName)) {
         cout << "ERROR: Could not load classifier cascade: " << cascadeName << endl;
         return -1;
     }
 
-    if(!capture.open("assets/video.mp4")) // para testar com um video
+    if(!capture.open(0)) // para testar com um video
     // if(!capture.open(0)) // para testar com a webcam
     {
         cout << "Capture from camera #0 didn't work" << endl;
@@ -249,11 +249,19 @@ void detectAndDraw( Mat& frame, CascadeClassifier& cascade, double scale, bool t
         Size(40, 40) );
 
     // PERCORRE AS FACES ENCONTRADAS
+    int i = 0;
     for (Rect r : faces)
     {
         rectangle( smallFrame, Point(cvRound(r.x), cvRound(r.y)),
                     Point(cvRound((r.x + r.width-1)), cvRound((r.y + r.height-1))),
                     color, 3);
+                    // Cria um nome de arquivo único (ex: "rosto_0.png", "rosto_1.png", etc.)
+
+        cv::Mat face_roi = frame(r);
+        string filename = "rosto_" + std::to_string(i) + ".png";
+        i += 1;
+        imwrite(filename, face_roi);   
+        cout << "Rosto detectado e salvo como " << filename << std::endl;
     }
 
     o->draw(smallFrame);
