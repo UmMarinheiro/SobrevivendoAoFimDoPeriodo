@@ -15,10 +15,16 @@ private:
     bool isVisible = true;
 public:
     Sprite(std::string asset);
+    Sprite(cv::Mat img);
     void draw(cv::Mat windowFrame);
 
     bool getVisibility();
     void setVisibility(bool newVisibility);
+
+    cv::Mat getImg();
+    cv::Mat getImgRef();
+    void changeImg(std::string asset);
+    void changeImg(cv::Mat img);
 
     static bool applyScaleToImg(cv::Mat& toScale, std::pair<float,float> size);
     static bool applyRotationToImg(cv::Mat& toRotate, float rot);

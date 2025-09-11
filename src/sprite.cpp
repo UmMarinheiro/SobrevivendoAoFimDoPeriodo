@@ -3,10 +3,9 @@
 #include <utility>
 #include "sprite.hpp"
 
-Sprite::Sprite(std::string asset)
-{
-    img = imread(asset, cv::IMREAD_UNCHANGED);
-}
+Sprite::Sprite(std::string asset) {changeImg(asset);}
+Sprite::Sprite(cv::Mat img) {changeImg(img);}
+
 void Sprite::draw(cv::Mat windowFrame)
 {
     if(!isVisible)return;
@@ -23,6 +22,11 @@ void Sprite::draw(cv::Mat windowFrame)
 
 bool Sprite::getVisibility() {return isVisible;}
 void Sprite::setVisibility(bool newVisibility) {this->isVisible = newVisibility;}
+
+cv::Mat Sprite::getImg() {return img.clone();}
+cv::Mat Sprite::getImgRef() {return img;}
+void Sprite::changeImg(std::string asset) {this->img = imread(asset, cv::IMREAD_UNCHANGED);}
+void Sprite::changeImg(cv::Mat img) {this->img = img.clone();}
 
 bool Sprite::applyScaleToImg(cv::Mat& toScale, std::pair<float,float> size)
 {
