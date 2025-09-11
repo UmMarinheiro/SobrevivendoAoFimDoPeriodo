@@ -7,6 +7,9 @@
 #include <string>
 
 #define NO_SCALING 1
+#define HORIZONTAL_FLIP 1
+#define VERTICAL_FLIP 0
+#define MINIMUM_SIZE 1
 
 class Sprite : public Transform
 {

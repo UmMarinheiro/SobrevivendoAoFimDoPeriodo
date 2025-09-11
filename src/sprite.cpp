@@ -1,5 +1,3 @@
-#include <iostream>
-#include <vector>
 #include <utility>
 #include "sprite.hpp"
 
@@ -31,10 +29,10 @@ void Sprite::changeImg(cv::Mat img) {this->img = img.clone();}
 bool Sprite::applyScaleToImg(cv::Mat& toScale, std::pair<float,float> size)
 {
     std::pair<float, float> newSize = {std::abs(size.first)*toScale.cols, std::abs(size.second)*toScale.rows};
-    if(newSize.first < 1 || newSize.second < 1) return false;
+    if(newSize.first < MINIMUM_SIZE || newSize.second < MINIMUM_SIZE) return false;
     
-    if(size.first < 0) flip(toScale, toScale, 1);
-    if(size.second < 0) flip(toScale, toScale, 0);
+    if(size.first < 0) flip(toScale, toScale, HORIZONTAL_FLIP);
+    if(size.second < 0) flip(toScale, toScale, VERTICAL_FLIP);
     resize(toScale, toScale, cv::Size(newSize.first, newSize.second));
     return true;
 }
@@ -54,10 +52,7 @@ bool Sprite::applyRotationToImg(cv::Mat& toRotate, float rot)
 void Sprite::drawImageFromConner(cv::Mat frame, cv::Mat img, int xPos, int yPos) 
 {
     if (yPos + img.rows >= frame.rows || xPos + img.cols >= frame.cols)
-    {
-        std::cout<<"ops"<<std::endl;
         return;
-    }
 
     cv::Mat mask;
     std::vector<cv::Mat> layers;
