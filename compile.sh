@@ -1,3 +1,3 @@
-g++ -o game main_modificado.cpp Menu.cpp -I/usr/include/opencv4 -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_objdetect -lopencv_videoio -lopencv_imgcodecs
+g++ legacy/facedetect_simple.cpp `pkg-config --cflags opencv4` `pkg-config --libs --static opencv4` -o facedetect_simple
 
-./game
+g++ legacy/facedetect_extra.cpp `pkg-config --cflags opencv4` `pkg-config --libs --static opencv4` -o facedetect_extra
