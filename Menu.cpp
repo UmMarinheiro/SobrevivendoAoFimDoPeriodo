@@ -1,4 +1,5 @@
 #include "Menu.hpp"
+#include "Render.hpp"
 #include <iostream>
 
 Menu::Menu(int width, int height, const std::string& wName) 
@@ -60,6 +61,7 @@ void Menu::drawOptionsMenu(Mat& options) {
             Point(botaoLeave.x + 70, botaoLeave.y + 40),
             FONT_HERSHEY_TRIPLEX, 1.0,
             Scalar(255, 255, 255), 3);
+    
 }
 
 // Método para desenhar o menu de descrição

@@ -1,5 +1,9 @@
 #pragma once
 
+#include "opencv2/objdetect.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/videoio.hpp"
 #include "opencv2/opencv.hpp"
 #include "globals.hpp"
 #include <string>
@@ -18,6 +22,8 @@ private:
     Rect botaoOpcoes;
     Rect botaoDesc;
     Rect botaoLeave;
+
+    Mat ney;
     
     std::string windowName;
     
