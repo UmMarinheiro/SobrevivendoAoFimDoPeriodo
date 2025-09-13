@@ -3,7 +3,10 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
 #include "Menu.hpp" // Incluir o header da classe Menu
+#include "sprite.hpp"
+#include "spriteMan.hpp"
 #include <iostream>
+#include <memory>
 
 using namespace std;
 using namespace cv;
@@ -82,8 +85,22 @@ int main()
     Menu gameMenu(camWidth, camHeight, wName);
     gameMenu.setupMouseCallback();
 
+    shared_ptr<Sprite> sprite1_sptr = Sprite::createSprite("assets/naogrita.jpeg");
+    shared_ptr<Sprite> sprite2_sptr = Sprite::createSprite("assets/naogrita.jpeg");
+
+    sprite1_sptr.get()->setGlobalPos({10,0});
+    //sprite2_sptr.get()->setGlobalPos({0,300});
+
     while (estado != SAIR) {
-        if (estado == MENU) {
+        Mat frame;
+        capture >> frame;
+        if (frame.empty()) break;
+
+        sprite1_sptr.get()->draw(frame);
+
+        detectAndDraw(frame, cascade, scale, tryflip, orange);
+
+        /*if (estado == MENU) {
             gameMenu.showMainMenu();
             int key = waitKey(30);
             if (key == 27) estado = SAIR; // ESC para sair
@@ -108,7 +125,7 @@ int main()
             gameMenu.showDescriptionMenu();
             int key = waitKey(30);
             if (key == 27) estado = SAIR;
-        }
+        }*/
     }
 
     return 0;
@@ -159,6 +176,9 @@ void detectAndDraw(Mat& frame, CascadeClassifier& cascade, double scale, bool tr
         resize(orange, orange_resized, Size(r.width, r.height));
         overlayImage(smallFrame, orange_resized, Point(r.x, r.y));
     }
+
+    // SpriteMan::windowFrame = smallFrame;
+    // SpriteMan::tick();
 
     imshow(wName, smallFrame);
 }
