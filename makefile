@@ -6,3 +6,7 @@ clean:
 
 run: build
 	./build
+
+compilerun:
+	make
+	make run
