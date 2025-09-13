@@ -1,10 +1,25 @@
+#include <memory>
 #include <utility>
 #include "sprite.hpp"
+#include "spriteMan.hpp"
 
 Sprite::Sprite(std::string asset) {changeImg(asset);}
 Sprite::Sprite(cv::Mat img) {changeImg(img);}
 
-void Sprite::draw(cv::Mat windowFrame)
+std::shared_ptr<Sprite> Sprite::createSprite(std::string asset)
+{
+    auto sprite_sptr = std::make_shared<Sprite>(Sprite(asset));
+    SpriteMan::addSprite(sprite_sptr);
+    return sprite_sptr;
+}
+std::shared_ptr<Sprite> Sprite::createSprite(cv::Mat img)
+{
+    auto sprite_sptr = std::make_shared<Sprite>(Sprite(img));
+    SpriteMan::addSprite(sprite_sptr);
+    return sprite_sptr;
+}
+
+void Sprite::draw(cv::Mat& windowFrame)
 {
     if(!isVisible)return;
     std::pair<float,float> pos = getGlobalPos();
@@ -51,7 +66,7 @@ bool Sprite::applyRotationToImg(cv::Mat& toRotate, float rot)
     return true;
 }
 
-void Sprite::drawImageFromConner(cv::Mat frame, cv::Mat img, int xPos, int yPos) 
+void Sprite::drawImageFromConner(cv::Mat& frame, cv::Mat img, int xPos, int yPos) 
 {
     if (yPos + img.rows >= frame.rows || xPos + img.cols >= frame.cols)
         return;
@@ -69,7 +84,7 @@ void Sprite::drawImageFromConner(cv::Mat frame, cv::Mat img, int xPos, int yPos)
         img.copyTo(frame.rowRange(yPos, yPos + img.rows).colRange(xPos, xPos + img.cols));
     }
 }
-void Sprite::drawImageFromCenter(cv::Mat frame, cv::Mat img, int xPos, int yPos) 
+void Sprite::drawImageFromCenter(cv::Mat& frame, cv::Mat img, int xPos, int yPos) 
 {
     drawImageFromConner(frame, img, 
         xPos - img.cols/2, 
