@@ -85,22 +85,15 @@ int main()
     Menu gameMenu(camWidth, camHeight, wName);
     gameMenu.setupMouseCallback();
 
-    shared_ptr<Sprite> sprite1_sptr = Sprite::createSprite("assets/naogrita.jpeg");
-    shared_ptr<Sprite> sprite2_sptr = Sprite::createSprite("assets/naogrita.jpeg");
+    shared_ptr<Sprite> sprite1_sptr = Sprite::createSprite("assets/orange.png");
+    shared_ptr<Sprite> sprite2_sptr = Sprite::createSprite("assets/orange.png");
 
-    sprite1_sptr.get()->setGlobalPos({10,0});
-    //sprite2_sptr.get()->setGlobalPos({0,300});
+    sprite1_sptr.get()->setGlobalPos({700,300});
+    sprite2_sptr.get()->setGlobalPos({700,400});
 
     while (estado != SAIR) {
-        Mat frame;
-        capture >> frame;
-        if (frame.empty()) break;
-
-        sprite1_sptr.get()->draw(frame);
-
-        detectAndDraw(frame, cascade, scale, tryflip, orange);
-
-        /*if (estado == MENU) {
+        sprite1_sptr.get()->translate({1,0});
+        if (estado == MENU) {
             gameMenu.showMainMenu();
             int key = waitKey(30);
             if (key == 27) estado = SAIR; // ESC para sair
@@ -125,7 +118,7 @@ int main()
             gameMenu.showDescriptionMenu();
             int key = waitKey(30);
             if (key == 27) estado = SAIR;
-        }*/
+        }
     }
 
     return 0;
@@ -177,8 +170,8 @@ void detectAndDraw(Mat& frame, CascadeClassifier& cascade, double scale, bool tr
         overlayImage(smallFrame, orange_resized, Point(r.x, r.y));
     }
 
-    // SpriteMan::windowFrame = smallFrame;
-    // SpriteMan::tick();
+    SpriteMan::windowFrame = smallFrame;
+    SpriteMan::tick();
 
     imshow(wName, smallFrame);
 }
