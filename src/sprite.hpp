@@ -30,6 +30,8 @@ public:
     void changeImg(cv::Mat img);
 
     static bool applyScaleToImg(cv::Mat& toScale, std::pair<float,float> size);
+
+    // NÃO FUNCIONA -> Falta atualizar o tamanho da imagem rotacionada
     static bool applyRotationToImg(cv::Mat& toRotate, float rot);
 
     static void drawImageFromCenter(cv::Mat frame, cv::Mat img, int xPos, int yPos);

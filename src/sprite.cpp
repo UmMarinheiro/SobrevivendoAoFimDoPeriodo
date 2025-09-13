@@ -9,11 +9,11 @@ void Sprite::draw(cv::Mat windowFrame)
     if(!isVisible)return;
     std::pair<float,float> pos = getGlobalPos();
     std::pair<float,float> size = getGlobalSize();
-    float rot = getGlobalRotation();
+    //float rot = getGlobalRotation();
 
     cv::Mat imgToDraw = img.clone();
     if(!applyScaleToImg(imgToDraw, size))return;
-    if(!applyRotationToImg(imgToDraw, rot))return;
+    //if(!applyRotationToImg(imgToDraw, rot))return;
     drawImageFromCenter(windowFrame, imgToDraw, pos.first, pos.second);
 }
 
@@ -36,7 +36,9 @@ bool Sprite::applyScaleToImg(cv::Mat& toScale, std::pair<float,float> size)
     resize(toScale, toScale, cv::Size(newSize.first, newSize.second));
     return true;
 }
-bool Sprite::applyRotationToImg(cv::Mat& toRotate, float rot)
+
+// NÃO FUNCIONA -> Falta atualizar o tamanho da imagem rotacionada
+bool Sprite::applyRotationToImg(cv::Mat& toRotate, float rot) 
 {
     int imgWidth = toRotate.cols;
     int imgHeight = toRotate.rows;
