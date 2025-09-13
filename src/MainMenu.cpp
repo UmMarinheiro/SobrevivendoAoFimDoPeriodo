@@ -3,10 +3,7 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
 #include "Menu.hpp" // Incluir o header da classe Menu
-#include "sprite.hpp"
-#include "spriteMan.hpp"
 #include <iostream>
-#include <memory>
 
 using namespace std;
 using namespace cv;
@@ -85,14 +82,7 @@ int main()
     Menu gameMenu(camWidth, camHeight, wName);
     gameMenu.setupMouseCallback();
 
-    shared_ptr<Sprite> sprite1_sptr = Sprite::createSprite("assets/orange.png");
-    shared_ptr<Sprite> sprite2_sptr = Sprite::createSprite("assets/orange.png");
-
-    sprite1_sptr.get()->setGlobalPos({700,300});
-    sprite2_sptr.get()->setGlobalPos({700,400});
-
     while (estado != SAIR) {
-        sprite1_sptr.get()->translate({1,0});
         if (estado == MENU) {
             gameMenu.showMainMenu();
             int key = waitKey(30);
@@ -169,9 +159,6 @@ void detectAndDraw(Mat& frame, CascadeClassifier& cascade, double scale, bool tr
         resize(orange, orange_resized, Size(r.width, r.height));
         overlayImage(smallFrame, orange_resized, Point(r.x, r.y));
     }
-
-    SpriteMan::windowFrame = smallFrame;
-    SpriteMan::tick();
 
     imshow(wName, smallFrame);
 }
