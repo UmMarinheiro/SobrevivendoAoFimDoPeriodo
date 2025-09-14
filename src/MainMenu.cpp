@@ -3,7 +3,7 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
-#include "Menu.hpp" // Incluir o header da classe Menu
+#include "Menu.hpp" 
 #include <iostream>
 #include "sprite.hpp"
 #include "colisor.hpp"
