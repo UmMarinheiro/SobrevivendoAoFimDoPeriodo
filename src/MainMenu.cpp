@@ -62,7 +62,6 @@ public:
         colisor_sptr = Colisor::createColisor(id, (Transform*)this);
         auto [w,h] = sprite_sptr->getLocalSize();
         colisor_sptr->setLocalSize({w,h});
-        colisor_sptr->setLocalPos({-w/2, -h/2});
     }
 };
 
@@ -121,6 +120,7 @@ int main()
         else if (estado == JOGO) {
             a->translate({1,0});
             b->translate({-1,0});
+            c->setLocalSize({c->getLocalSize().first+0.1,1});
             if((b->colisor_sptr->getColisionsStartingWith("a")).size()>0) cout<<"ai!!"<<endl;
             Mat frame;
             capture >> frame;

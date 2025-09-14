@@ -2,7 +2,7 @@
 #include "colisorMan.hpp"
 #include "transform.hpp"
 Colisor::Colisor(std::string identifier,Transform* intitParent) 
-    : identifier(identifier), Transform(intitParent){}
+    : identifier(identifier), UpperConnerTransform(intitParent){}
 
 std::shared_ptr<Colisor> Colisor::createColisor(std::string identifier, Transform* intitParent)
 {

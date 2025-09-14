@@ -50,18 +50,18 @@ float Transform::getGlobalRotation(){return rotationLocalToGlobal(IDENTITY_ROTAT
 
 void Transform::setGlobalPos(std::pair<float, float> globalPos) 
 {
-    if(parent == nullptr) this->pos = globalPos;
-    else this->pos = parent->posGlobalToLocal(globalPos);
+    if(parent == nullptr) setLocalPos(globalPos);
+    else setLocalPos(parent->posGlobalToLocal(globalPos));
 }
 void Transform::setGlobalSize(std::pair<float, float> globalSize) 
 {
-    if(parent == nullptr) this->size = globalSize;
-    else this->size = parent->sizeGlobalToLocal(globalSize);
+    if(parent == nullptr) setLocalSize(globalSize);
+    else setLocalSize(parent->sizeGlobalToLocal(globalSize));
 }
 void Transform::setGlobalRotation(float globalRotation) 
 {
-    if(parent == nullptr) this->rotation = globalRotation;
-    else this->rotation = parent->rotationGlobalToLocal(globalRotation);
+    if(parent == nullptr) setLocalRotation(globalRotation);
+    else setLocalRotation(parent->rotationGlobalToLocal(globalRotation));
 }
 
 void Transform::translate(std::pair<float, float> translation) 

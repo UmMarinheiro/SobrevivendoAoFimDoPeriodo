@@ -4,6 +4,7 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
 #include "transform.hpp"
+#include "upperConnerTransform.hpp"
 #include <memory>
 #include <string>
 
@@ -12,7 +13,7 @@
 #define VERTICAL_FLIP 0
 #define MINIMUM_SIZE 1
 
-class Sprite : public Transform
+class Sprite : public UpperConnerTransform
 {
 private:
     cv::Mat img;
@@ -39,6 +40,5 @@ public:
     // NÃO FUNCIONA -> Falta atualizar o tamanho da imagem rotacionada
     static bool applyRotationToImg(cv::Mat& toRotate, float rot);
 
-    static void drawImageFromCenter(cv::Mat& frame, cv::Mat img, int xPos, int yPos);
-    static void drawImageFromConner(cv::Mat& frame, cv::Mat img, int xPos, int yPos);
+    static void drawImage(cv::Mat& frame, cv::Mat img, int xPos, int yPos);
 };

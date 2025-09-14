@@ -4,13 +4,14 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
 #include "transform.hpp"
+#include "upperConnerTransform.hpp"
 #include <memory>
 #include <string>
 #include <vector>
 
 #define MIN_PIXEL_FOR_COLISION 10
 
-class Colisor : public Transform
+class Colisor : public UpperConnerTransform
 {
 private:
     std::string identifier;
@@ -23,6 +24,6 @@ public:
     std::vector<std::string> getColisions();
     std::vector<std::string> getColisionsStartingWith(std::string filter);
     bool isPointInside(std::pair<float,float> point);
-    bool isCollidingWith( Colisor* other) ;
+    bool isCollidingWith(Colisor* other) ;
     cv::Rect getRect() ;
 };

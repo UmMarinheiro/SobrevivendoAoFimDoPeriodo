@@ -3,9 +3,10 @@
 #include "sprite.hpp"
 #include "spriteMan.hpp"
 #include "transform.hpp"
+#include "upperConnerTransform.hpp"
 
-Sprite::Sprite(std::string asset, Transform* intitParent) : Transform(intitParent) {changeImg(asset);}
-Sprite::Sprite(cv::Mat img, Transform* intitParent) : Transform(intitParent) {changeImg(img);}
+Sprite::Sprite(std::string asset, Transform* intitParent) : UpperConnerTransform(intitParent) {changeImg(asset);}
+Sprite::Sprite(cv::Mat img, Transform* intitParent) : UpperConnerTransform(intitParent) {changeImg(img);}
 
 std::shared_ptr<Sprite> Sprite::createSprite(std::string asset, Transform* intitParent)
 {
@@ -30,7 +31,7 @@ void Sprite::draw(cv::Mat& windowFrame)
     cv::Mat imgToDraw = img.clone();
     if(!applyScaleToImg(imgToDraw, size))return;
     //if(!applyRotationToImg(imgToDraw, rot))return;
-    drawImageFromCenter(windowFrame, imgToDraw, pos.first, pos.second);
+    drawImage(windowFrame, imgToDraw, pos.first, pos.second);
 }
 
 
@@ -75,7 +76,7 @@ bool Sprite::applyRotationToImg(cv::Mat& toRotate, float rot)
     return true;
 }
 
-void Sprite::drawImageFromConner(cv::Mat& frame, cv::Mat img, int xPos, int yPos) 
+void Sprite::drawImage(cv::Mat& frame, cv::Mat img, int xPos, int yPos) 
 {
     if (yPos + img.rows >= frame.rows || xPos + img.cols >= frame.cols)
         return;
@@ -92,10 +93,4 @@ void Sprite::drawImageFromConner(cv::Mat& frame, cv::Mat img, int xPos, int yPos
     } else {
         img.copyTo(frame.rowRange(yPos, yPos + img.rows).colRange(xPos, xPos + img.cols));
     }
-}
-void Sprite::drawImageFromCenter(cv::Mat& frame, cv::Mat img, int xPos, int yPos) 
-{
-    drawImageFromConner(frame, img, 
-        xPos - img.cols/2, 
-        yPos - img.rows/2);
 }

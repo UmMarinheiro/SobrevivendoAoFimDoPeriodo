@@ -11,13 +11,17 @@ class Transform
 private:
     Transform *parent = nullptr;
     std::set<Transform*> children;
-    
+protected:
     // ATRIBUTOS DESSE TRANSFORM 
     // MEDIDOS NO REFERENCIAL DO PAI
+
+    // USE OS METODOS GET/SET
     std::pair<float, float> pos = IDENTITY_POS; 
+    // USE OS METODOS GET/SET
     std::pair<float, float> size = IDENTITY_SIZE;
+    // USE OS METODOS GET/SET
     float rotation = IDENTITY_ROTATION;
-    
+
 public:
     Transform(Transform *parent = nullptr, 
         std::pair<float, float> pos = IDENTITY_POS, 
@@ -39,9 +43,9 @@ public:
     std::pair<float, float > getGlobalSize();
     float getGlobalRotation();
 
-    void setLocalPos(std::pair<float, float> localPos);
-    void setLocalSize(std::pair<float, float> localSize);
-    void setLocalRotation(float lovalRotation);
+    virtual void setLocalPos(std::pair<float, float> localPos);
+    virtual void setLocalSize(std::pair<float, float> localSize);
+    virtual void setLocalRotation(float lovalRotation);
     
     void setGlobalPos(std::pair<float, float> globalPos);
     void setGlobalSize(std::pair<float, float> globalSize);
