@@ -17,12 +17,12 @@ class Sprite : public Transform
 private:
     cv::Mat img;
     bool isVisible = true;
-    Sprite(std::string asset);
-    Sprite(cv::Mat img);
+    Sprite(std::string asset, Transform* intitParent = nullptr);
+    Sprite(cv::Mat img, Transform* intitParent = nullptr);
 public:
     
-    static std::shared_ptr<Sprite> createSprite(std::string asset);
-    static std::shared_ptr<Sprite> createSprite(cv::Mat img);
+    static std::shared_ptr<Sprite> createSprite(std::string asset,Transform* intitParent = nullptr);
+    static std::shared_ptr<Sprite> createSprite(cv::Mat img, Transform* intitParent = nullptr);
 
     void draw(cv::Mat& windowFrame);
 

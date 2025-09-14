@@ -17,12 +17,14 @@ private:
     static ColisorMan& getInstance();
     
     void prv_addColisor(std::weak_ptr<Colisor> toAdd);
-    std::vector<std::string> prv_getColisions(const Colisor* colisor);
-    std::vector<std::string> prv_getColisionsStartingWith(const Colisor* colisor, std::string filter); 
+    std::vector<std::string> prv_getColisions(Colisor* colisor);
+    std::vector<std::string> prv_getColisionsStartingWith(Colisor* colisor, std::string filter); 
     std::vector<std::string> prv_getColisionsWithPoint(std::pair<float,float> point);
+    std::vector<cv::Rect> prv_getRects();
 public:
     static void addColisor(std::weak_ptr<Colisor> toAdd);
-    static std::vector<std::string> getColisions(const Colisor* colisor);
-    static std::vector<std::string> getColisionsStartingWith(const Colisor* colisor, std::string filter);
+    static std::vector<std::string> getColisions(Colisor* colisor);
+    static std::vector<std::string> getColisionsStartingWith(Colisor* colisor, std::string filter);
     static std::vector<std::string> getColisionsWithPoint(std::pair<float,float> point);
+    static std::vector<cv::Rect> getRects();
 };

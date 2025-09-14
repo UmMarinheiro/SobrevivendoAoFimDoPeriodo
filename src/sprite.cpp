@@ -2,19 +2,20 @@
 #include <utility>
 #include "sprite.hpp"
 #include "spriteMan.hpp"
+#include "transform.hpp"
 
-Sprite::Sprite(std::string asset) {changeImg(asset);}
-Sprite::Sprite(cv::Mat img) {changeImg(img);}
+Sprite::Sprite(std::string asset, Transform* intitParent) : Transform(intitParent) {changeImg(asset);}
+Sprite::Sprite(cv::Mat img, Transform* intitParent) : Transform(intitParent) {changeImg(img);}
 
-std::shared_ptr<Sprite> Sprite::createSprite(std::string asset)
+std::shared_ptr<Sprite> Sprite::createSprite(std::string asset, Transform* intitParent)
 {
-    auto sprite_sptr = std::make_shared<Sprite>(Sprite(asset));
+    auto sprite_sptr = std::make_shared<Sprite>(Sprite(asset, intitParent));
     SpriteMan::addSprite(sprite_sptr);
     return sprite_sptr;
 }
-std::shared_ptr<Sprite> Sprite::createSprite(cv::Mat img)
+std::shared_ptr<Sprite> Sprite::createSprite(cv::Mat img, Transform* intitParent)
 {
-    auto sprite_sptr = std::make_shared<Sprite>(Sprite(img));
+    auto sprite_sptr = std::make_shared<Sprite>(Sprite(img, intitParent));
     SpriteMan::addSprite(sprite_sptr);
     return sprite_sptr;
 }
@@ -38,12 +39,20 @@ void Sprite::setVisibility(bool newVisibility) {this->isVisible = newVisibility;
 
 cv::Mat Sprite::getImg() {return img.clone();}
 cv::Mat Sprite::getImgRef() {return img;}
-void Sprite::changeImg(std::string asset) {this->img = imread(asset, cv::IMREAD_UNCHANGED);}
-void Sprite::changeImg(cv::Mat img) {this->img = img.clone();}
+void Sprite::changeImg(std::string asset) 
+{
+    this->img = imread(asset, cv::IMREAD_UNCHANGED);
+    setLocalSize({img.cols, img.rows});
+}
+void Sprite::changeImg(cv::Mat img) 
+{
+    this->img = img.clone();
+    setLocalSize({img.cols, img.rows});
+}
 
 bool Sprite::applyScaleToImg(cv::Mat& toScale, std::pair<float,float> size)
 {
-    std::pair<float, float> newSize = {std::abs(size.first)*toScale.cols, std::abs(size.second)*toScale.rows};
+    std::pair<float, float> newSize = {std::abs(size.first), std::abs(size.second)};
     if(newSize.first < MINIMUM_SIZE || newSize.second < MINIMUM_SIZE) return false;
     
     if(size.first < 0) flip(toScale, toScale, HORIZONTAL_FLIP);

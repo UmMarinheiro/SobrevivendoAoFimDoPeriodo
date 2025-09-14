@@ -14,15 +14,15 @@ class Colisor : public Transform
 {
 private:
     std::string identifier;
-    Colisor(std::string identifier);
+    Colisor(std::string identifier, Transform* intitParent = nullptr);
 public:
-    static std::shared_ptr<Colisor> createColisor(std::string identifier);
+    static std::shared_ptr<Colisor> createColisor(std::string identifier, Transform* intitParent = nullptr);
 
-    std::string getIdentifier() const;
+    std::string getIdentifier() ;
     void setIdentifier(std::string identifier);
     std::vector<std::string> getColisions();
     std::vector<std::string> getColisionsStartingWith(std::string filter);
     bool isPointInside(std::pair<float,float> point);
-    bool isCollidingWith(const Colisor* other) const;
-    cv::Rect getRect() const;
+    bool isCollidingWith( Colisor* other) ;
+    cv::Rect getRect() ;
 };

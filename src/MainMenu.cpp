@@ -1,9 +1,15 @@
+#include "colisorMan.hpp"
 #include "opencv2/objdetect.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
 #include "Menu.hpp" // Incluir o header da classe Menu
 #include <iostream>
+#include "sprite.hpp"
+#include "colisor.hpp"
+#include "spriteMan.hpp"
+#include "transform.hpp"
+#include <memory>
 
 using namespace std;
 using namespace cv;
@@ -45,6 +51,21 @@ void drawImage(Mat frame, Mat img, int xPos, int yPos) {
 }
 float axys = 0.0;
 
+class Teste : public Transform
+{
+public:
+    shared_ptr<Sprite> sprite_sptr;
+    shared_ptr<Colisor> colisor_sptr;
+    Teste(std::string asset, std::string id)
+    {
+        sprite_sptr = Sprite::createSprite(asset, (Transform*)this);
+        colisor_sptr = Colisor::createColisor(id, (Transform*)this);
+        auto [w,h] = sprite_sptr->getLocalSize();
+        colisor_sptr->setLocalSize({w,h});
+        colisor_sptr->setLocalPos({-w/2, -h/2});
+    }
+};
+
 int main()
 {
     //--- Abrir câmera ---
@@ -82,6 +103,15 @@ int main()
     Menu gameMenu(camWidth, camHeight, wName);
     gameMenu.setupMouseCallback();
 
+    auto a = std::make_shared<Teste>("assets/orange.png","a");
+    (*a).setGlobalPos({700,300});
+
+    auto b = std::make_shared<Teste>("assets/orange.png","b");
+    (*b).setGlobalPos({900,300});
+    
+    auto c = std::make_shared<Teste>("assets/orange.png","c");
+    (*c).setGlobalPos({1100,300});
+
     while (estado != SAIR) {
         if (estado == MENU) {
             gameMenu.showMainMenu();
@@ -89,6 +119,9 @@ int main()
             if (key == 27) estado = SAIR; // ESC para sair
         }
         else if (estado == JOGO) {
+            a->translate({1,0});
+            b->translate({-1,0});
+            if((b->colisor_sptr->getColisionsStartingWith("a")).size()>0) cout<<"ai!!"<<endl;
             Mat frame;
             capture >> frame;
             if (frame.empty()) break;
@@ -127,6 +160,8 @@ void detectAndDraw(Mat& frame, CascadeClassifier& cascade, double scale, bool tr
     cvtColor(smallFrame, grayFrame, COLOR_BGR2GRAY);
     equalizeHist(grayFrame, grayFrame);
 
+    SpriteMan::windowFrame = smallFrame;
+
     cascade.detectMultiScale(grayFrame, faces,
         1.3, 2, 0 | CASCADE_SCALE_IMAGE, Size(40, 40));
 
@@ -158,6 +193,14 @@ void detectAndDraw(Mat& frame, CascadeClassifier& cascade, double scale, bool tr
         Mat orange_resized;
         resize(orange, orange_resized, Size(r.width, r.height));
         overlayImage(smallFrame, orange_resized, Point(r.x, r.y));
+    }
+    SpriteMan::tick();
+    vector<cv::Rect> rects = ColisorMan::getRects();
+    for (Rect r : rects)
+    {
+        rectangle( smallFrame, Point(cvRound(r.x), cvRound(r.y)),
+                    Point(cvRound((r.x + r.width-1)), cvRound((r.y + r.height-1))),
+                    Scalar(0,0,255), 3);
     }
 
     imshow(wName, smallFrame);
