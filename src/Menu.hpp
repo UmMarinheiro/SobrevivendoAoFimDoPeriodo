@@ -14,6 +14,7 @@ private:
     int camHeight;
 
     bool laranja = false;
+    bool play = false;
     
     // Botões do menu
     Rect botaoJogar;

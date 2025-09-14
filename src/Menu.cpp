@@ -32,7 +32,7 @@ void Menu::loadMenuImages() {
     }
 
     // Carrega ícones dos botões
-    Mat playIcon = imread("assets/orange.png", IMREAD_UNCHANGED);
+    Mat playIcon = imread("assets/play_icon.png", IMREAD_UNCHANGED);
     if (!playIcon.empty()) {
         menuImages["play_icon"] = playIcon;
     }
@@ -129,6 +129,9 @@ void Menu::drawMainMenu(Mat& menu) {
                 Point(botaoJogar.x + 60, botaoJogar.y + 40),
                 FONT_HERSHEY_TRIPLEX, 1.0,
                 Scalar(255, 255, 255), 2);
+        if(play){
+            drawImageOnMenu(menu, menuImages["desc_orange"], Point(botaoJogar.x + 150, botaoJogar.y + 10), Size(40, 40));
+        }
     } else {
         putText(menu, "Play",
                 Point(botaoJogar.x + 85, botaoJogar.y + 40),
@@ -323,10 +326,10 @@ void Menu::mouseCallback(int event, int x, int y, int flags) {
             laranja = true;
         }
     }
-    /*if (quadrado.contains(Point(x,y))){
-        std::cout << "Jogar hover!" << std::endl; LOGICA DOS BOTOES DO MENU!!!
-        laranja = true;
-    }*/ 
+    if (botaoJogar.contains(Point(x,y))){
+        std::cout << "Jogar hover!" << std::endl; 
+        play = true;
+    } 
 }
 
 // Método para configurar o callback do mouse
