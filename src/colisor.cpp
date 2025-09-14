@@ -36,5 +36,5 @@ cv::Rect Colisor::getRect()
 {
     auto [x,y] = getGlobalPos();
     auto [w,h] = getGlobalSize();
-    return {x,y,w,h};
+    return {(int)x,(int)y,(int)w,(int)h};
 }
