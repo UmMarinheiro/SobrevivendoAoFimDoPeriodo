@@ -113,15 +113,6 @@ int main()
     Menu gameMenu(camWidth, camHeight, wName);
     gameMenu.setupMouseCallback();
 
-    auto a = std::make_shared<Teste>("assets/orange.png","a");
-    (*a).setGlobalPos({700,300});
-
-    auto b = std::make_shared<Teste>("assets/orange.png","b");
-    (*b).setGlobalPos({900,300});
-    
-    auto c = std::make_shared<Teste>("assets/orange.png","c");
-    (*c).setGlobalPos({1100,300});
-
     while (estado != SAIR) {
         if (estado == MENU) {
             gameMenu.showMainMenu();
@@ -129,11 +120,6 @@ int main()
             if (key == 27) estado = SAIR; // ESC para sair
         }
         else if (estado == JOGO) {
-            a->translate({1,0});
-            b->translate({-1,0});
-            c->setLocalSize({c->getLocalSize().first+0.1,1});
-            if((b->colisor_sptr->getColisionsStartingWith("a")).size()>0) cout<<"ai!!"<<endl;
-            
             Mat frame;
             capture >> frame;
             if (frame.empty()) break;
@@ -340,8 +326,6 @@ void detectAndDraw(Mat& frame, CascadeClassifier& cascade, double scale, bool tr
     cvtColor(smallFrame, grayFrame, COLOR_BGR2GRAY);
     equalizeHist(grayFrame, grayFrame);
 
-    SpriteMan::windowFrame = smallFrame;
-
     cascade.detectMultiScale(grayFrame, faces,
         1.3, 2, 0 | CASCADE_SCALE_IMAGE, Size(40, 40));
 
@@ -370,15 +354,6 @@ void detectAndDraw(Mat& frame, CascadeClassifier& cascade, double scale, bool tr
                     Scalar(255,0,0), 3);
         }
         // REMOVIDO: A sobreposição da imagem finalmente.png no rosto
-    }
-    
-    SpriteMan::tick();
-    vector<cv::Rect> rects = ColisorMan::getRects();
-    for (Rect r : rects)
-    {
-        rectangle( smallFrame, Point(cvRound(r.x), cvRound(r.y)),
-                    Point(cvRound((r.x + r.width-1)), cvRound((r.y + r.height-1))),
-                    Scalar(0,0,255), 3);
     }
 
     imshow(wName, smallFrame);
