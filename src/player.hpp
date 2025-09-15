@@ -27,4 +27,5 @@ private:
 public:
     Player(std::string asset);
     void updateRec(std::pair<float, float> pos, float t);
+    void updatePast(float t);
 };

@@ -25,4 +25,14 @@ void Player::updateRec(std::pair<float, float> pos, float t)
     val.second/=(filled?BUFFERSIZE:current);
     setGlobalPos(val);
     record.push_back({val,t});
-};
+}
+void Player::updatePast(float t)
+{
+    int i = 0;
+    for(i = 0; i < record.size(); i++) 
+        if(record[i].t > t) break;
+    i--;
+    if(i == -1) i = 0;
+
+    setGlobalPos(record[i].pos);
+}
