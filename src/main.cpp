@@ -5,6 +5,7 @@
 #include "opencv2/videoio.hpp"
 #include "Menu.hpp" // Incluir o header da classe Menu
 #include <iostream>
+#include "opencvUtils.hpp"
 #include "sprite.hpp"
 #include "colisor.hpp"
 #include "spriteMan.hpp"
@@ -316,44 +317,13 @@ int obterProximoNumeroJogador() {
 // Detecta rostos mas não desenha nada em cima deles
 void detectAndDraw(Mat& frame, CascadeClassifier& cascade, double scale, bool tryflip)
 {
-    vector<Rect> faces;
-    Mat smallFrame, grayFrame;
+    Mat smallFrame = getFrame(frame, scale, tryflip);
+    vector<Rect> faces = getFaces(frame, cascade);
 
-    double fx = 1.0 / scale;
-    resize(frame, smallFrame, Size(), fx, fx, INTER_LINEAR_EXACT);
-    if (tryflip)
-        flip(smallFrame, smallFrame, 1);
-    cvtColor(smallFrame, grayFrame, COLOR_BGR2GRAY);
-    equalizeHist(grayFrame, grayFrame);
-
-    cascade.detectMultiScale(grayFrame, faces,
-        1.3, 2, 0 | CASCADE_SCALE_IMAGE, Size(40, 40));
-
-    static int mopa = 1;
-    static int tito = 5;
-
-    Mat img = imread("assets/orange.png", IMREAD_UNCHANGED), img2;
-    printf("img::width: %d, height=%d\n", img.cols, img.rows );
-    if (img.rows > 200 || img.cols > 200)
-        resize( img, img, Size(200, 200));
-    drawImage(smallFrame, img, mopa += tito, 300);
-    Rect recLaranja = Rect(mopa, 300, img.cols, img.rows);
-    if(mopa > smallFrame.cols - img.cols){
-        tito = -tito;
-    }
-
-    // percorre as faces encontradas - apenas desenha retângulos, SEM sobreposição de imagem
-    for (Rect r : faces) {
-        if((r & recLaranja).area() > 500){
-            rectangle( smallFrame, Point(cvRound(r.x), cvRound(r.y)),
-                    Point(cvRound((r.x + r.width-1)), cvRound((r.y + r.height-1))),
-                    Scalar(0,0,255), 3);
-        }else{
-            rectangle( smallFrame, Point(cvRound(r.x), cvRound(r.y)),
-                    Point(cvRound((r.x + r.width-1)), cvRound((r.y + r.height-1))),
-                    Scalar(255,0,0), 3);
-        }
-        // REMOVIDO: A sobreposição da imagem finalmente.png no rosto
+    for (Rect r : faces) {        
+        rectangle( smallFrame, Point(cvRound(r.x), cvRound(r.y)),
+                Point(cvRound((r.x + r.width-1)), cvRound((r.y + r.height-1))),
+                Scalar(255,0,0), 3);
     }
 
     imshow(wName, smallFrame);
