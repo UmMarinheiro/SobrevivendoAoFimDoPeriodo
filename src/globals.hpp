@@ -1,6 +1,6 @@
 #pragma once
 
-enum Estado { MENU, JOGO, SAIR, OPTIONS, DESC, LARANJA };
+enum Estado { MENU, JOGO, RODAR_JOGO, SAIR_JOGO, SAIR, OPTIONS, DESC, LARANJA };
 
 extern Estado estado;
 

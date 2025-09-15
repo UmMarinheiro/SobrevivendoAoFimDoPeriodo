@@ -1,4 +1,5 @@
 #include "colisorMan.hpp"
+#include "gameInstance.hpp"
 #include "opencv2/objdetect.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
@@ -114,6 +115,8 @@ int main()
     Menu gameMenu(camWidth, camHeight, wName);
     gameMenu.setupMouseCallback();
 
+    shared_ptr<GameInstance> game;
+
     while (estado != SAIR) {
         if (estado == MENU) {
             gameMenu.showMainMenu();
@@ -121,6 +124,11 @@ int main()
             if (key == 27) estado = SAIR; // ESC para sair
         }
         else if (estado == JOGO) {
+            game = make_shared<GameInstance>(wName, scale, tryflip,
+                cascade, capture);
+            estado = RODAR_JOGO;
+        }
+        else if (estado == RODAR_JOGO){
             Mat frame;
             capture >> frame;
             if (frame.empty()) break;
@@ -136,21 +144,22 @@ int main()
             }
             else if (turno == ITEM) {
                 detectAndDraw(frame, cascade, scale, tryflip);
-                turno = PARRY; 
+                game->startTurn(obterProximoNumeroJogador()-1);
+                turno = POSITION; 
             }
             else if (turno == POSITION) {
-                detectAndDraw(frame, cascade, scale, tryflip);
-                turno = PARRY; 
-            }
-            else if (turno == PARRY) {
-                detectAndDraw(frame, cascade, scale, tryflip);
-                turno = PHOTO; 
+                game->tick();
+                if(game->hasTurnEnded()) turno = PHOTO;
             }
 
             char key = (char)waitKey(10);
             if (key == 27) estado = SAIR; // ESC fecha
-            if (key == 'm') estado = MENU; // M retorna ao menu
+            if (key == 'm') estado = SAIR_JOGO; // M retorna ao menu
             if (key == 'n') turno = PHOTO; // N força novo turno PHOTO (para testes)
+        }
+        else if (estado == SAIR_JOGO) {
+            game.reset();
+            estado = MENU;
         }
         else if (estado == OPTIONS) {
             gameMenu.showOptionsMenu();

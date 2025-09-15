@@ -6,6 +6,8 @@ std::pair<float, float> getRectCenter(cv::Rect r) {return {r.x + r.width/2, r.y 
 Player::Player(std::string asset)
 {
     sprite_sptr = Sprite::createSprite(asset, (Transform*)this);
+    sprite_sptr->setLocalSize({1,1});
+    setLocalSize({50,50});
 }
 void Player::updateRec(std::pair<float, float> pos, float t)
 {
