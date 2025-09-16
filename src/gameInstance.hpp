@@ -2,8 +2,7 @@
 #include <chrono>
 #include <memory>
 #include "player.hpp"
-
-#define TURN_DURATION_MS 10000
+#include "gameConstants.hpp"
 
 class GameInstance
 {
