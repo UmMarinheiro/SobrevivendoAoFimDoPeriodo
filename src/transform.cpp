@@ -32,7 +32,7 @@ void Transform::changeParent(Transform *newParent)
 
 Transform::~Transform()
 {
-    for(Transform* child : children) delete child;
+    for(Transform* child : children) child->parent = nullptr;
     if(parent!=nullptr) parent->removeChild(this);
 }
 
