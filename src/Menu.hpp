@@ -14,7 +14,25 @@ private:
     int camHeight;
 
     bool laranja = false;
+    bool oscar = false;
     bool play = false;
+    bool opcoes = false;
+    bool description = false;
+    bool sair = false;
+    bool clear = false;
+
+    //Variaveis auxiliares dos quadrados da descrição
+
+    bool q = false;
+    bool q1 = false;
+    bool q2 = false;
+    bool q3 = false;
+    bool q4 = false;
+    bool q5 = false;
+    bool q6 = false;
+    bool q7 = false;
+    bool q8 = false;
+
     
     // Botões do menu
     Rect botaoJogar;
@@ -22,9 +40,19 @@ private:
     Rect botaoOpcoes;
     Rect botaoDesc;
     Rect botaoLeave;
-    Rect quadrado;
     Rect linhaVertical;
     
+    Rect quadrado;
+    Rect quadrado1;
+    Rect quadrado2;
+    Rect quadrado3;
+    Rect quadrado4;
+    Rect quadrado5;
+    Rect quadrado6;
+    Rect quadrado7;
+    Rect quadrado8;
+
+
     std::string windowName;
     
     // Armazenamento de imagens para os menus
