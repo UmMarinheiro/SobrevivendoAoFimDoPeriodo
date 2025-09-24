@@ -26,6 +26,11 @@ private:
 
 public:
     Player(std::string asset);
+
+    void startRec();
+    void startPast();
     void updateRec(std::pair<float, float> pos, float t);
     void updatePast(float t);
+    void endRec();
+    void endPast();
 };

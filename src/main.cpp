@@ -148,8 +148,12 @@ int main()
                 turno = POSITION; 
             }
             else if (turno == POSITION) {
-                game->tick();
-                if(game->hasTurnEnded()) turno = PHOTO;
+                game->updateTurn();
+                if(game->hasTurnEnded()) 
+                {
+                    game->endTurn();
+                    turno = PHOTO;
+                }
             }
 
             char key = (char)waitKey(10);

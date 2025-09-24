@@ -25,8 +25,11 @@ public:
 
     cv::Mat getFrame();
     std::vector<cv::Rect> getFaces(cv::Mat frame);
+    
     void startTurn(int number);
-    void tick();
+    void updateTurn();
+    void endTurn();
+
     int getTimeFromStart();
     bool hasTurnEnded();
 };

@@ -23,11 +23,14 @@ std::vector<cv::Rect> GameInstance::getFaces(cv::Mat frame)
 void GameInstance::startTurn(int number)
 {
     ended = false;
-    if(current!=nullptr)past.push_back(current);
     current = std::make_shared<Player>("assets/players/player" + std::to_string(number) + ".png");
+    
+    current->startRec();
+    for(auto played : past) played->startPast();
+
     startTime = std::chrono::steady_clock::now();
 }
-void GameInstance::tick()
+void GameInstance::updateTurn()
 {
     cv::Mat frame = getFrame();
     std::vector<cv::Rect> faces = getFaces(frame);
@@ -41,6 +44,17 @@ void GameInstance::tick()
 
     cv::imshow(wName, frame);
     if(elapsedTime > TURN_DURATION_MS) ended = true;
+}
+void GameInstance::endTurn()
+{
+    for(auto played : past)played->endPast();
+    
+    if(current!=nullptr) 
+    {
+        current->endRec();
+        past.push_back(current);
+    }
+    current = nullptr;
 }
 int GameInstance::getTimeFromStart()
 {

@@ -9,6 +9,15 @@ Player::Player(std::string asset)
     sprite_sptr->setLocalSize({1,1});
     setLocalSize({50,50});
 }
+
+void Player::startRec()
+{
+
+}
+void Player::startPast()
+{
+
+}
 void Player::updateRec(std::pair<float, float> pos, float t)
 {
     buffer[current] = pos;
@@ -37,4 +46,12 @@ void Player::updatePast(float t)
     if(i == -1) i = 0;
 
     setGlobalPos(record[i].pos);
+}
+void Player::endRec()
+{
+
+}
+void Player::endPast()
+{
+
 }
