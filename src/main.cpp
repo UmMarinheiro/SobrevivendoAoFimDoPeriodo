@@ -79,7 +79,7 @@ public:
         colisor_sptr->setLocalSize({w,h});
     }
 };
-
+Turno turno = PHOTO;
 int main()
 {
     //--- Abrir câmera ---
@@ -127,13 +127,12 @@ int main()
             game = make_shared<GameInstance>(wName, scale, tryflip,
                 cascade, capture);
             estado = RODAR_JOGO;
+            turno = PHOTO;
         }
         else if (estado == RODAR_JOGO){
             Mat frame;
             capture >> frame;
             if (frame.empty()) break;
-            
-            static Turno turno = PHOTO;
             
             if (turno == PHOTO) {
                 handlePhotoTurn(frame, cascade);
@@ -148,8 +147,12 @@ int main()
                 turno = POSITION; 
             }
             else if (turno == POSITION) {
-                game->tick();
-                if(game->hasTurnEnded()) turno = PHOTO;
+                game->updateTurn();
+                if(game->hasTurnEnded()) 
+                {
+                    game->endTurn();
+                    turno = PHOTO;
+                }
             }
 
             char key = (char)waitKey(10);
