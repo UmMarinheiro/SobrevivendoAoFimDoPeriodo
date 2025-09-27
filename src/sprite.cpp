@@ -78,7 +78,8 @@ bool Sprite::applyRotationToImg(cv::Mat& toRotate, float rot)
 
 void Sprite::drawImage(cv::Mat& frame, cv::Mat img, int xPos, int yPos) 
 {
-    if (yPos + img.rows >= frame.rows || xPos + img.cols >= frame.cols)
+    if(yPos <= 0 || xPos <= 0 ||
+        yPos + img.rows >= frame.rows || xPos + img.cols >= frame.cols)
         return;
 
     cv::Mat mask;

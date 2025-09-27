@@ -1,10 +1,12 @@
 #include "colisorMan.hpp"
+#include "gameInstance.hpp"
 #include "opencv2/objdetect.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
-#include "Menu.hpp" // Incluir o header da classe Menu
+#include "Menu.hpp" 
 #include <iostream>
+#include "opencvUtils.hpp"
 #include "sprite.hpp"
 #include "colisor.hpp"
 #include "spriteMan.hpp"
@@ -15,6 +17,7 @@
 #include <filesystem>
 #include <sstream>
 #include <iomanip>
+#include "audioManager.hpp"
 
 using namespace std;
 using namespace cv;
@@ -41,6 +44,7 @@ double scale = 1;
 CascadeClassifier cascade;
 Mat img;
 VideoCapture capture;
+AudioManager audioManager;
 
 bool jogadorCapturado = false;
 
@@ -113,27 +117,25 @@ int main()
     Menu gameMenu(camWidth, camHeight, wName);
     gameMenu.setupMouseCallback();
 
-    auto a = std::make_shared<Teste>("assets/orange.png","a");
-    (*a).setGlobalPos({700,300});
+    shared_ptr<GameInstance> game;
 
-    auto b = std::make_shared<Teste>("assets/orange.png","b");
-    (*b).setGlobalPos({900,300});
-    
-    auto c = std::make_shared<Teste>("assets/orange.png","c");
-    (*c).setGlobalPos({1100,300});
+    if(estado == MENU) gameMenu.playBackgroundMusic();
 
     while (estado != SAIR) {
         if (estado == MENU) {
             gameMenu.showMainMenu();
             int key = waitKey(30);
-            if (key == 27) estado = SAIR; // ESC para sair
+            if (key == 27) estado = SAIR; 
+            if (key == 'j') audioManager.setSoundVolume( (audioManager.getSoundVolume() + 10));
+            if (key == 'k') audioManager.setSoundVolume( (audioManager.getSoundVolume() - 10));
+            gameMenu.updateAnimations();
         }
         else if (estado == JOGO) {
-            a->translate({1,0});
-            b->translate({-1,0});
-            c->setLocalSize({c->getLocalSize().first+0.1,1});
-            if((b->colisor_sptr->getColisionsStartingWith("a")).size()>0) cout<<"ai!!"<<endl;
-            
+            game = make_shared<GameInstance>(wName, scale, tryflip,
+                cascade, capture);
+            estado = RODAR_JOGO;
+        }
+        else if (estado == RODAR_JOGO){
             Mat frame;
             capture >> frame;
             if (frame.empty()) break;
@@ -149,34 +151,37 @@ int main()
             }
             else if (turno == ITEM) {
                 detectAndDraw(frame, cascade, scale, tryflip);
-                turno = PARRY; 
+                game->startTurn(obterProximoNumeroJogador()-1);
+                turno = POSITION; 
             }
             else if (turno == POSITION) {
-                detectAndDraw(frame, cascade, scale, tryflip);
-                turno = PARRY; 
-            }
-            else if (turno == PARRY) {
-                detectAndDraw(frame, cascade, scale, tryflip);
-                turno = PHOTO; 
+                game->tick();
+                if(game->hasTurnEnded()) turno = PHOTO;
             }
 
             char key = (char)waitKey(10);
             if (key == 27) estado = SAIR; // ESC fecha
-            if (key == 'm') estado = MENU; // M retorna ao menu
+            if (key == 'm') estado = SAIR_JOGO; // M retorna ao menu
             if (key == 'n') turno = PHOTO; // N força novo turno PHOTO (para testes)
+        }
+        else if (estado == SAIR_JOGO) {
+            game.reset();
+            estado = MENU;
         }
         else if (estado == OPTIONS) {
             gameMenu.showOptionsMenu();
+            gameMenu.updateAnimations();
             int key = waitKey(30);
-            if (key == 27) estado = SAIR;
+            if (key == 27) estado = SAIR;    
         }
         else if (estado == DESC) {
             gameMenu.showDescriptionMenu();
+            gameMenu.updateAnimations();
             int key = waitKey(30);
             if (key == 27) estado = SAIR;
         }
     }
-
+    gameMenu.stopBackgroundMusic();
     return 0;
 }
 
@@ -235,7 +240,7 @@ void handlePhotoTurn(Mat& frame, CascadeClassifier& cascade) {
 }
 
 void aplicarOverlayGuia(Mat& frame) {
-    Mat overlay = imread("assets/overlay.png", IMREAD_UNCHANGED);
+    Mat overlay = imread("assets/images/overlay.png", IMREAD_UNCHANGED);
     if (!overlay.empty()) {
         resize(overlay, overlay, frame.size());
 
@@ -330,55 +335,13 @@ int obterProximoNumeroJogador() {
 // Detecta rostos mas não desenha nada em cima deles
 void detectAndDraw(Mat& frame, CascadeClassifier& cascade, double scale, bool tryflip)
 {
-    vector<Rect> faces;
-    Mat smallFrame, grayFrame;
+    Mat smallFrame = getFrame(frame, scale, tryflip);
+    vector<Rect> faces = getFaces(frame, cascade);
 
-    double fx = 1.0 / scale;
-    resize(frame, smallFrame, Size(), fx, fx, INTER_LINEAR_EXACT);
-    if (tryflip)
-        flip(smallFrame, smallFrame, 1);
-    cvtColor(smallFrame, grayFrame, COLOR_BGR2GRAY);
-    equalizeHist(grayFrame, grayFrame);
-
-    SpriteMan::windowFrame = smallFrame;
-
-    cascade.detectMultiScale(grayFrame, faces,
-        1.3, 2, 0 | CASCADE_SCALE_IMAGE, Size(40, 40));
-
-    static int mopa = 1;
-    static int tito = 5;
-
-    Mat img = imread("assets/orange.png", IMREAD_UNCHANGED), img2;
-    printf("img::width: %d, height=%d\n", img.cols, img.rows );
-    if (img.rows > 200 || img.cols > 200)
-        resize( img, img, Size(200, 200));
-    drawImage(smallFrame, img, mopa += tito, 300);
-    Rect recLaranja = Rect(mopa, 300, img.cols, img.rows);
-    if(mopa > smallFrame.cols - img.cols){
-        tito = -tito;
-    }
-
-    // percorre as faces encontradas - apenas desenha retângulos, SEM sobreposição de imagem
-    for (Rect r : faces) {
-        if((r & recLaranja).area() > 500){
-            rectangle( smallFrame, Point(cvRound(r.x), cvRound(r.y)),
-                    Point(cvRound((r.x + r.width-1)), cvRound((r.y + r.height-1))),
-                    Scalar(0,0,255), 3);
-        }else{
-            rectangle( smallFrame, Point(cvRound(r.x), cvRound(r.y)),
-                    Point(cvRound((r.x + r.width-1)), cvRound((r.y + r.height-1))),
-                    Scalar(255,0,0), 3);
-        }
-        // REMOVIDO: A sobreposição da imagem finalmente.png no rosto
-    }
-    
-    SpriteMan::tick();
-    vector<cv::Rect> rects = ColisorMan::getRects();
-    for (Rect r : rects)
-    {
+    for (Rect r : faces) {        
         rectangle( smallFrame, Point(cvRound(r.x), cvRound(r.y)),
-                    Point(cvRound((r.x + r.width-1)), cvRound((r.y + r.height-1))),
-                    Scalar(0,0,255), 3);
+                Point(cvRound((r.x + r.width-1)), cvRound((r.y + r.height-1))),
+                Scalar(255,0,0), 3);
     }
 
     imshow(wName, smallFrame);

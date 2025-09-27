@@ -5,6 +5,9 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <chrono>
+#include "animatedSprite.hpp"
+#include "audioManager.hpp"
 
 using namespace cv;
 
@@ -21,8 +24,7 @@ private:
     bool sair = false;
     bool clear = false;
 
-    //Variaveis auxiliares dos quadrados da descrição
-
+    // Variáveis auxiliares dos quadrados da descrição
     bool q = false;
     bool q1 = false;
     bool q2 = false;
@@ -32,9 +34,15 @@ private:
     bool q6 = false;
     bool q7 = false;
     bool q8 = false;
-
     
-    // Botões do menu
+    // Botões animados
+    AnimatedButton animBotaoJogar;
+    AnimatedButton animBotaoOpcoes;
+    AnimatedButton animBotaoDesc;
+    AnimatedButton animBotaoSair;
+    AnimatedButton animBotaoLeave;
+    
+    // Botões do menu (mantidos para compatibilidade)
     Rect botaoJogar;
     Rect botaoSair;
     Rect botaoOpcoes;
@@ -51,9 +59,16 @@ private:
     Rect quadrado6;
     Rect quadrado7;
     Rect quadrado8;
-
+    Rect volumep;
+    Rect volumem;
 
     std::string windowName;
+
+    bool wasJogarHovered;
+    bool wasOpcoesHovered;
+    bool wasDescHovered;
+    bool wasSairHovered;
+    bool wasLeaveHovered;
     
     // Armazenamento de imagens para os menus
     std::map<std::string, Mat> menuImages;
@@ -69,6 +84,9 @@ private:
     // Método para carregar todas as imagens dos menus
     void loadMenuImages();
     
+    // Inicializar animações dos botões
+    void initializeButtonAnimations();
+    
 public:
     Menu(int width, int height, const std::string& wName);
     ~Menu();
@@ -77,6 +95,9 @@ public:
     void showMainMenu();
     void showOptionsMenu();
     void showDescriptionMenu();
+    
+    // Atualizar animações
+    void updateAnimations();
     
     // Callback do mouse
     static void mouseCallbackStatic(int event, int x, int y, int flags, void* userdata);
@@ -91,4 +112,12 @@ public:
     
     // Método para configurar callback do mouse
     void setupMouseCallback();
+
+    //audio
+
+    void playHoverSound();
+    void playClickSound();
+    void playBackgroundMusic();
+    void stopBackgroundMusic();
+    void playSound(const std::string& filePath);
 };
