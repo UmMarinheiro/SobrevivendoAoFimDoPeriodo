@@ -85,7 +85,7 @@ public:
 int main()
 {
     //--- Abrir câmera ---
-    if(!capture.open(0)) // para testar com um video
+    if(!capture.open("assets/images/video.mp4")) // para testar com um video
     //capture.open(0);
     if (!capture.isOpened()) {
         cout << "Erro ao abrir a câmera!" << endl;
@@ -163,6 +163,9 @@ int main()
             if (key == 27) estado = SAIR; // ESC fecha
             if (key == 'm') estado = SAIR_JOGO; // M retorna ao menu
             if (key == 'n') turno = PHOTO; // N força novo turno PHOTO (para testes)
+            if (key == 'f') gameMenu.desbloquearItem("Mochila");
+            if (key == 'g') gameMenu.desbloquearItem("Marmita");
+            if (key == 'h') gameMenu.desbloquearItem("Laranja");
         }
         else if (estado == SAIR_JOGO) {
             game.reset();

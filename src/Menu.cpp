@@ -16,6 +16,7 @@ Menu::Menu(int width, int height, const string& wName)
       wasSairHovered(false), wasLeaveHovered(false) {
     loadMenuImages();
     initializeButtonAnimations();
+    inicializarItensDescricao();
 }
 
 Menu::~Menu(){}
@@ -32,7 +33,7 @@ void Menu::playSound(const string& filePath) {
         cout << "Erro ao reproduzir audio: " << filePath << endl;
     }
 }
-
+//=====================================================================================================================
 void Menu::playHoverSound() {
     playSound("assets/audio/click.wav");
 }
@@ -48,7 +49,7 @@ void Menu::playBackgroundMusic() {
 void Menu::stopBackgroundMusic() {
     system("pkill aplay 2>/dev/null");
 }
-
+//=====================================================================================================================
 void Menu::loadMenuImages() {
     Mat bgMain = imread("assets/images/bck.png", IMREAD_COLOR);
     if (!bgMain.empty()) {
@@ -69,28 +70,8 @@ void Menu::loadMenuImages() {
     if (!descriptionIcon.empty()){
         menuImages["description_icon"] = descriptionIcon;
     }
-
-    Mat playIcon = imread("assets/images/orange.png", IMREAD_UNCHANGED);
-    if (!playIcon.empty()) {
-        menuImages["play_icon"] = playIcon;
-    }
     
-    Mat optionsIcon = imread("assets/images/orange.png", IMREAD_UNCHANGED);
-    if (!optionsIcon.empty()) {
-        menuImages["options_icon"] = optionsIcon;
-    }
-    
-    Mat exitIcon = imread("assets/images/orange.png", IMREAD_UNCHANGED);
-    if (!exitIcon.empty()) {
-        menuImages["exit_icon"] = exitIcon;
-    }
-    
-    Mat descIcon = imread("assets/images/orange.png", IMREAD_UNCHANGED);
-    if (!descIcon.empty()) {
-        menuImages["desc_icon"] = descIcon;
-    }
-    
-    Mat quadradoIcon = imread("assets/images/oscar.png", IMREAD_UNCHANGED);
+    Mat quadradoIcon = imread("assets/images/arrascaeta.jpeg", IMREAD_UNCHANGED);
     if(!quadradoIcon.empty()){
         menuImages["quadrado"] = quadradoIcon;
     }
@@ -112,8 +93,17 @@ void Menu::loadMenuImages() {
     if(!volumeMinus.empty()){
         menuImages["volumeMinus"] = volumeMinus;
     }
+//===================================================ICONES DOS ITENS=================================================================
+    Mat Mochila = imread("assets/itens/mochila.png", IMREAD_UNCHANGED);
+    if(!Mochila.empty()){
+        menuImages["Mochila"] = Mochila;
+    }
+    Mat Marmita = imread("assets/itens/marmita.png", IMREAD_UNCHANGED);
+    if(!Marmita.empty()){  
+        menuImages["Marmita"] = Marmita;
+    }
 }
-
+//=====================================================================================================================
 void Menu::initializeButtonAnimations() {
     animBotaoJogar.setStaticFrame(Scalar(255, 100, 100));
     animBotaoJogar.hoverAnimation.generatePulseFrames(240, 60, Scalar(200, 100, 100), 10);
@@ -135,13 +125,55 @@ void Menu::initializeButtonAnimations() {
     animBotaoLeave.hoverAnimation.generatePulseFrames(240, 60, Scalar(150, 150, 150), 10);
     animBotaoLeave.hoverAnimation.setFrameDuration(0.06);
 }
-
+//=====================================================================================================================
 void Menu::updateAnimations() {
     animBotaoJogar.updateAnimation();
     animBotaoOpcoes.updateAnimation();
     animBotaoDesc.updateAnimation();
     animBotaoSair.updateAnimation();
     animBotaoLeave.updateAnimation();
+}
+void Menu::inicializarItensDescricao() {
+    itensDescricao.clear();
+    
+    // Definir todas as posições dos quadrados primeiro
+    vector<Rect> posicoes = {
+        Rect(450, 350, 100, 100),
+        Rect(600, 350, 100, 100),
+        Rect(750, 350, 100, 100),
+        Rect(900, 350, 100, 100),
+        Rect(1050, 350, 100, 100),
+        Rect(450, 500, 100, 100)
+    };
+    
+    // Adicionar todos os itens possíveis (inicialmente bloqueados)
+    itensDescricao = {
+        {"Mochila", "Mochila", "Item essencial para carregar materiais academicos", false, posicoes[0]},
+        {"Laranja", "Laranja", "Fonte de energia natural para estudos prolongados", false, posicoes[1]},
+        {"Marmita", "Marmita", "Refeicao caseira para manter o foco nas aulas", false, posicoes[2]},
+        //{"Caderno", "Caderno", "Para anotar todas as materias importantes", false, posicoes[3]},
+        //{"Calculadora", "Calculadora", "Essencial para calculos complexos", false, posicoes[4]},
+        //{"Garrafa", "Garrafa de Agua", "Hidratacao é fundamental para o aprendizado", false, posicoes[5]}
+    };
+}
+
+void Menu::desbloquearItem(const string& itemKey) {
+    for (auto& item : itensDescricao) {
+        if (item.key == itemKey && !item.desbloqueado) {
+            item.desbloqueado = true;
+            cout << "Item desbloqueado: " << item.nome << endl;
+            break;
+        }
+    }
+}
+
+bool Menu::isItemDesbloqueado(const string& itemKey) const {
+    for (const auto& item : itensDescricao) {
+        if (item.key == itemKey) {
+            return item.desbloqueado;
+        }
+    }
+    return false;
 }
 
 void Menu::drawImageOnMenu(Mat& menu, const Mat& image, Point position, Size targetSize) {
@@ -173,7 +205,24 @@ void Menu::drawImageOnMenu(Mat& menu, const Mat& image, Point position, Size tar
         imgToRender.copyTo(menu(Rect(position.x, position.y, imgToRender.cols, imgToRender.rows)));
     }
 }
+//=====================================================================================================================
+void Menu::drawMenu(Mat &desc, const std::vector<MenuItem>& items) {
+    for (const auto& item : items) {
+        // Desenha o quadrado
+        rectangle(desc, item.box, Scalar(255, 255, 255), 2);
 
+        // Se existir imagem associada
+        auto it = menuImages.find(item.imageKey);
+        if (it != menuImages.end()) {
+            Point iconPos(item.box.x + 10, item.box.y + 10);
+            Size iconSize(item.box.width - 20, item.box.height - 20);
+
+            drawImageOnMenu(desc, it->second, iconPos, iconSize);
+        }
+    }
+}
+
+//=====================================================================================================================
 void Menu::drawMainMenu(Mat& menu) {
     if (menuImages.find("main_bg") != menuImages.end()) {
         Mat background = menuImages["main_bg"];
@@ -221,7 +270,7 @@ void Menu::drawMainMenu(Mat& menu) {
     putText(menu, "Exit", Point(botaoSair.x + 75, botaoSair.y + 40),
             FONT_HERSHEY_TRIPLEX, 1.0, Scalar(255, 255, 255), 2);
 }
-
+//=====================================================================================================================
 void Menu::drawOptionsMenu(Mat& options) {
     if (menuImages.find("options_bg") != menuImages.end()) {
         Mat background = menuImages["options_bg"];
@@ -266,8 +315,9 @@ void Menu::drawOptionsMenu(Mat& options) {
             FONT_HERSHEY_TRIPLEX, 1.0, Scalar(255, 255, 255), 3);
     
 }
-
+//=====================================================================================================================
 void Menu::drawDescriptionMenu(Mat& desc) {
+
     if (menuImages.find("description_icon") != menuImages.end()) {
         Point iconPos(camWidth * 0.25 + 200, camHeight * 0.1);
         drawImageOnMenu(desc, menuImages["description_icon"], iconPos, Size(500, 200));
@@ -276,35 +326,72 @@ void Menu::drawDescriptionMenu(Mat& desc) {
                 FONT_HERSHEY_TRIPLEX, 1.0, Scalar(255, 255, 255), 3);
     }
 
-    if (q == true){
-        putText(desc, "Desc1", Point(camWidth * 0.68 - 1, camHeight * 0.25),
-                FONT_HERSHEY_TRIPLEX, 1.0, Scalar(255, 255, 255), 2);
-    }
-    if(q1 == true){
-        putText(desc, "Desc2", Point(camWidth * 0.68 - 1, camHeight * 0.25),
-                FONT_HERSHEY_TRIPLEX, 1.0, Scalar(255, 0, 0), 2);
-    }
-
+    // Linha divisória
     linhaVertical = Rect(camWidth * 0.65 - 1, camHeight * 0.2, 2, camHeight * 0.5);
     rectangle(desc, linhaVertical, Scalar(255, 255, 255), FILLED);
 
-    quadrado = Rect(300, 350, 100, 100);
-    rectangle(desc, quadrado, Scalar(255, 255, 255), 2);
-    if(menuImages.find("quadrado") != menuImages.end()){    
-        Point iconPos(quadrado.x + 10, quadrado.y + 10);
-        drawImageOnMenu(desc, menuImages["quadrado"], iconPos, Size(80, 80));
+    // Desenhar apenas os itens desbloqueados
+    vector<MenuItem> itemsParaDesenhar;
+    for (const auto& item : itensDescricao) {
+        if (item.desbloqueado) {
+            itemsParaDesenhar.push_back({item.posicao, item.key});
+        }
     }
 
+    drawMenu(desc, itemsParaDesenhar);
+
+    Point descPos(camWidth * 0.68, camHeight * 0.25);
+    
+    if (qselected > 0) {
+    // Encontrar o item selecionado baseado na posição na lista de desbloqueados
+    int contador = 1;
+    bool itemEncontrado = false;
+    
+    for (const auto& item : itensDescricao) {
+        if (item.desbloqueado) {
+            if (contador == qselected) {
+                putText(desc, item.nome, 
+                        Point(descPos.x, descPos.y), 
+                        FONT_HERSHEY_TRIPLEX, 0.8, Scalar(255, 255, 255), 2);
+                
+                string descricao = item.descricao;
+                putText(desc, descricao, 
+                        Point(descPos.x, descPos.y + 40), 
+                        FONT_HERSHEY_SIMPLEX, 0.6, Scalar(200, 200, 200), 1);
+                itemEncontrado = true;
+                break;
+            }
+            contador++;
+        }
+    }
+    
+    // Se não encontrou o item selecionado, resetar qselected
+    if (!itemEncontrado) {
+        qselected = 0;
+    }
+    }   else {
+        if (itemsParaDesenhar.empty()) {
+            putText(desc, "Nenhum item desbloqueado ainda", 
+                    descPos, FONT_HERSHEY_TRIPLEX, 0.7, Scalar(150, 150, 150), 2);
+            putText(desc, "Explore o jogo para encontrar itens!", 
+                    Point(descPos.x, descPos.y + 40), FONT_HERSHEY_SIMPLEX, 0.6, Scalar(150, 150, 150), 1);
+        } else {
+            putText(desc, "Clique em um item para ver sua descricao", 
+                    descPos, FONT_HERSHEY_TRIPLEX, 0.7, Scalar(255, 255, 255), 2);
+        }
+    }
+
+    // Botão leave
     animBotaoLeave.rect = Rect(camWidth * 0.5 - 90, camHeight * 0.5 + 250, 240, 60);
     botaoLeave = animBotaoLeave.rect;
 
     Mat leaveSprite = animBotaoLeave.getCurrentSprite();
     leaveSprite.copyTo(desc(botaoLeave));
-    
+
     putText(desc, "Leave", Point(botaoLeave.x + 70, botaoLeave.y + 40),
             FONT_HERSHEY_TRIPLEX, 1.0, Scalar(255, 255, 255), 3);
 }
-
+//=====================================================================================================================
 void Menu::showMainMenu() {
     Mat menu(camHeight, camWidth, CV_8UC3, Scalar(0, 0, 0));
     drawMainMenu(menu);
@@ -400,14 +487,22 @@ void Menu::mouseCallback(int event, int x, int y, int flags) {
     if (estado == DESC && event == EVENT_LBUTTONDOWN) {
         if (botaoLeave.contains(Point(x, y))) {
             playClickSound();
-            cout << "Leave desc clicado!" << endl;
-            q = false; q1 = false; q2 = false; q3 = false;
-            q4 = false; q5 = false; q6 = false; q7 = false; q8 = false;
+            qselected = 0;
             estado = MENU;
+        }
+        int contador = 1;
+        for (const auto& item : itensDescricao) {
+            if (item.desbloqueado && item.posicao.contains(Point(x, y))) {
+                playClickSound();
+                qselected = contador;
+                break;
+            }
+            if (item.desbloqueado) {
+                contador++;
+            }
         }
     }
 }
-
 void Menu::setupMouseCallback() {
     setMouseCallback(windowName, mouseCallbackStatic, this);
 }

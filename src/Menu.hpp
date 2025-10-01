@@ -11,6 +11,19 @@
 
 using namespace cv;
 
+struct MenuItem {
+    Rect box;
+    std::string imageKey;         
+};
+
+struct ItemDescricao {
+    std::string key;
+    std::string nome;
+    std::string descricao;
+    bool desbloqueado;
+    Rect posicao;
+};
+
 class Menu {
 private:
     int camWidth;
@@ -24,16 +37,7 @@ private:
     bool sair = false;
     bool clear = false;
 
-    // Variáveis auxiliares dos quadrados da descrição
-    bool q = false;
-    bool q1 = false;
-    bool q2 = false;
-    bool q3 = false;
-    bool q4 = false;
-    bool q5 = false;
-    bool q6 = false;
-    bool q7 = false;
-    bool q8 = false;
+    int qselected = 0;
     
     // Botões animados
     AnimatedButton animBotaoJogar;
@@ -49,16 +53,7 @@ private:
     Rect botaoDesc;
     Rect botaoLeave;
     Rect linhaVertical;
-    
-    Rect quadrado;
-    Rect quadrado1;
-    Rect quadrado2;
-    Rect quadrado3;
-    Rect quadrado4;
-    Rect quadrado5;
-    Rect quadrado6;
-    Rect quadrado7;
-    Rect quadrado8;
+
     Rect volumep;
     Rect volumem;
 
@@ -83,6 +78,11 @@ private:
     
     // Método para carregar todas as imagens dos menus
     void loadMenuImages();
+    void drawMenu(Mat &desc, const std::vector<MenuItem>& items);
+
+    std::vector<ItemDescricao> itensDescricao;
+
+    void inicializarItensDescricao();
     
     // Inicializar animações dos botões
     void initializeButtonAnimations();
@@ -120,4 +120,9 @@ public:
     void playBackgroundMusic();
     void stopBackgroundMusic();
     void playSound(const std::string& filePath);
+
+    //Itens
+
+    void desbloquearItem(const std::string& itemKey);
+    bool isItemDesbloqueado(const std::string& itemKey) const;
 };
