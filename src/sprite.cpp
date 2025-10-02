@@ -38,6 +38,14 @@ void Sprite::draw(cv::Mat& windowFrame)
 bool Sprite::getVisibility() {return isVisible;}
 void Sprite::setVisibility(bool newVisibility) {this->isVisible = newVisibility;}
 
+int Sprite::getLayer() {return layer;}
+void Sprite::setLayer(int layer) 
+{
+    if(layer==getLayer())return;
+    this->layer = layer;
+    SpriteMan::updateList();
+}
+
 cv::Mat Sprite::getImg() {return img.clone();}
 cv::Mat Sprite::getImgRef() {return img;}
 void Sprite::changeImg(std::string asset) 

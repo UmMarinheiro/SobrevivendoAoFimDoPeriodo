@@ -18,6 +18,7 @@ class Sprite : public UpperConnerTransform
 private:
     cv::Mat img;
     bool isVisible = true;
+    int layer;
     Sprite(std::string asset, Transform* intitParent = nullptr);
     Sprite(cv::Mat img, Transform* intitParent = nullptr);
 public:
@@ -29,6 +30,8 @@ public:
 
     bool getVisibility();
     void setVisibility(bool newVisibility);
+    int getLayer();
+    void setLayer(int layer);
 
     cv::Mat getImg();
     cv::Mat getImgRef();
