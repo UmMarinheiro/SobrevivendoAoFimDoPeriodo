@@ -26,6 +26,7 @@ private:
 
 public:
     Player(std::string asset);
+    static std::shared_ptr<Player> createPlayer(std::string asset, int item);
 
     void startRec();
     void startPast();

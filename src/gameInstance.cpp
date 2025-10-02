@@ -23,7 +23,7 @@ std::vector<cv::Rect> GameInstance::getFaces(cv::Mat frame)
 void GameInstance::startTurn(int number)
 {
     ended = false;
-    current = std::make_shared<Player>("assets/players/player" + std::to_string(number) + ".png");
+    current = Player::createPlayer("assets/players/player" + std::to_string(number) + ".png", 0);
     
     current->startRec();
     for(auto played : past) played->startPast();

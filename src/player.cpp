@@ -1,4 +1,6 @@
 #include "player.hpp"
+#include <memory>
+#include <string>
 #include <utility>
 
 std::pair<float, float> getRectCenter(cv::Rect r) {return {r.x + r.width/2, r.y + r.height/2};}
@@ -8,6 +10,13 @@ Player::Player(std::string asset)
     sprite_sptr = Sprite::createSprite(asset, (Transform*)this);
     sprite_sptr->setLocalSize({1,1});
     setLocalSize({50,50});
+}
+std::shared_ptr<Player> Player::createPlayer(std::string asset, int item)
+{
+    if(item == 1) return std::make_shared<Player>("assets/arrascaeta.jpeg");//std::make_shared<PlayerPen>(asset);
+    // item pode ser substituido por um enum
+    // else if(item == tal) std::make_shared<tal>(asset)
+    else return std::make_shared<Player>(asset);
 }
 
 void Player::startRec()
