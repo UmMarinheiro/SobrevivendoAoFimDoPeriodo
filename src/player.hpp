@@ -28,6 +28,10 @@ public:
     Player(std::string asset);
     static std::shared_ptr<Player> createPlayer(std::string asset, int item);
 
+    void appendPosToBuffer(const std::pair<float, float> &pos);
+    std::pair<float, float> getPosFromBuffer();
+    std::pair<float, float> getPosFromRecordings(float t);
+
     void startRec();
     void startPast();
     void updateRec(std::pair<float, float> pos, float t);

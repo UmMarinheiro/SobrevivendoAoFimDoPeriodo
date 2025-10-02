@@ -19,6 +19,35 @@ std::shared_ptr<Player> Player::createPlayer(std::string asset, int item)
     else return std::make_shared<Player>(asset);
 }
 
+void Player::appendPosToBuffer(const std::pair<float, float> &pos)
+{
+    buffer[current] = pos;
+
+    current++;
+    if(current>=8)filled=true;
+    current%=BUFFERSIZE;
+}
+std::pair<float, float> Player::getPosFromBuffer()
+{
+    std::pair<float, float> val = {0,0};
+    char bufferCount = filled?BUFFERSIZE:current;
+    for(int i = 0; i < bufferCount; i++)
+    {
+        val.first += buffer[i].first;
+        val.second += buffer[i].second;
+    }
+    val.first /= bufferCount;
+    val.second /= bufferCount;
+
+    return val;
+}
+std::pair<float, float> Player::getPosFromRecordings(float t)
+{
+    int i = 0;
+    for(i = 0; i < record.size()-1; i++) if(record[i+1].t > t) break;
+    return record[i].pos;
+}
+
 void Player::startRec()
 {
 
@@ -29,32 +58,14 @@ void Player::startPast()
 }
 void Player::updateRec(std::pair<float, float> pos, float t)
 {
-    buffer[current] = pos;
-
-    current++;
-    if(current>=8)filled=true;
-    current%=BUFFERSIZE;
-
-    std::pair<float, float> val = {0,0};
-    for(int i = 0; i < (filled?BUFFERSIZE:current); i++)
-    {
-        val.first += buffer[i].first;
-        val.second += buffer[i].second;
-    }
-    val.first/=(filled?BUFFERSIZE:current);
-    val.second/=(filled?BUFFERSIZE:current);
-    setGlobalPos(val);
-    record.push_back({val,t});
+    appendPosToBuffer(pos);
+    pos = getPosFromBuffer();
+    setGlobalPos(pos);
+    record.push_back({pos,t});
 }
 void Player::updatePast(float t)
 {
-    int i = 0;
-    for(i = 0; i < record.size(); i++) 
-        if(record[i].t > t) break;
-    i--;
-    if(i == -1) i = 0;
-
-    setGlobalPos(record[i].pos);
+    setGlobalPos(getPosFromRecordings(t));
 }
 void Player::endRec()
 {
