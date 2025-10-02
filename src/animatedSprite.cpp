@@ -27,7 +27,7 @@ void AnimatedSprite::generatePulseFrames(int width, int height, cv::Scalar baseC
         if (frameCount == 1) {
             pulse = 1.0; // Frame estático
         } else {
-            pulse = 0.7 + 0.3 * sin(i * 0.5); // Animação
+            pulse = 0.7 + 0.3 * sin(i * 0.6); // Animação
         }
         
         cv::Scalar color = baseColor * pulse;

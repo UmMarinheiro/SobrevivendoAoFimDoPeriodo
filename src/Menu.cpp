@@ -19,6 +19,8 @@ Menu::Menu(int width, int height, const string& wName)
     inicializarItensDescricao();
 }
 
+int v = 5;
+
 Menu::~Menu(){}
 
 AudioManager audio;
@@ -102,11 +104,15 @@ void Menu::loadMenuImages() {
     if(!Marmita.empty()){  
         menuImages["Marmita"] = Marmita;
     }
+    Mat Laranja = imread("assets/itens/orange.png", IMREAD_UNCHANGED);
+    if(!Laranja.empty()){
+        menuImages["Laranja"] = Laranja;
+    }
 }
 //=====================================================================================================================
 void Menu::initializeButtonAnimations() {
-    animBotaoJogar.setStaticFrame(Scalar(255, 100, 100));
-    animBotaoJogar.hoverAnimation.generatePulseFrames(240, 60, Scalar(200, 100, 100), 10);
+    animBotaoJogar.setStaticFrame(Scalar(100, 100, 100));
+    animBotaoJogar.hoverAnimation.generatePulseFrames(240, 60, Scalar(150, 150, 150), 10);
     animBotaoJogar.hoverAnimation.setFrameDuration(0.06);
     
     animBotaoOpcoes.setStaticFrame(Scalar(100, 100, 100));
@@ -304,7 +310,32 @@ void Menu::drawOptionsMenu(Mat& options) {
                 FONT_HERSHEY_TRIPLEX, 2.0,
                 Scalar(255, 255, 255), 3);
     }
+    vector<Rect> quadrados = {
+        Rect(255, 460, 10, 40),
+        Rect(275, 460, 10, 40),
+        Rect(295, 460, 10, 40),
+        Rect(315, 460, 10, 40),
+        Rect(335, 460, 10, 40),
+        Rect(355, 460, 10, 40),
+        Rect(375, 460, 10, 40),
+        Rect(395, 460, 10, 40),
+        Rect(415, 460, 10, 40),
+        Rect(435, 460, 10, 40)
+    };
 
+    cout << v << endl;
+
+    rectangle(options, quadrados[0], Scalar(255, 255, 255), FILLED);
+    rectangle(options, quadrados[1], Scalar(255, 255, 255), FILLED);
+    rectangle(options, quadrados[2], Scalar(255, 255, 255), FILLED);
+    rectangle(options, quadrados[3], Scalar(255, 255, 255), FILLED);
+    rectangle(options, quadrados[4], Scalar(255, 255, 255), FILLED);
+    rectangle(options, quadrados[5], Scalar(255, 255, 255), FILLED);
+    rectangle(options, quadrados[6], Scalar(255, 255, 255), FILLED);
+    rectangle(options, quadrados[7], Scalar(255, 255, 255), FILLED);
+    rectangle(options, quadrados[8], Scalar(255, 255, 255), FILLED);
+    rectangle(options, quadrados[9], Scalar(255, 255, 255), FILLED);
+    
     animBotaoLeave.rect = Rect(camWidth * 0.5 - 90, camHeight * 0.5 + 250, 240, 60);
     botaoLeave = animBotaoLeave.rect;
 
@@ -477,10 +508,14 @@ void Menu::mouseCallback(int event, int x, int y, int flags) {
         if (volumep.contains(Point(x, y))) {
             playClickSound();
             audio.setSoundVolume(min(audio.getSoundVolume() + 10, 100));
+            v++;
+            if(v > 10) v = 10;
         }
         if(volumem.contains(Point(x, y))){
             playClickSound();
             audio.setSoundVolume(max(audio.getSoundVolume() - 10, 0));
+            v--;
+            if(v < 0) v = 0;
         }
     }
     

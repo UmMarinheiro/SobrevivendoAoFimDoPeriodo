@@ -113,13 +113,13 @@ int main()
         cout << "Diretório assets/players criado!" << endl;
     }
 
-    namedWindow(wName, WINDOW_KEEPRATIO);
+    namedWindow(wName, WINDOW_FULLSCREEN);
     Menu gameMenu(camWidth, camHeight, wName);
     gameMenu.setupMouseCallback();
 
     shared_ptr<GameInstance> game;
 
-    if(estado == MENU) gameMenu.playBackgroundMusic();
+    //if(estado == MENU) gameMenu.playBackgroundMusic();
 
     while (estado != SAIR) {
         if (estado == MENU) {
