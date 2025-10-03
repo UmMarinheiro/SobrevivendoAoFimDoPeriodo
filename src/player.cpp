@@ -1,20 +1,23 @@
 #include "player.hpp"
+#include "colisor.hpp"
 #include <memory>
 #include <string>
 #include <utility>
+#include "playerPen.hpp"
 
 std::pair<float, float> getRectCenter(cv::Rect r) {return {r.x + r.width/2, r.y + r.height/2};}
 
 Player::Player(std::string asset)
 {
     sprite_sptr = Sprite::createSprite(asset, (Transform*)this);
-    sprite_sptr->setLocalSize({1,1});
-    setLocalSize({50,50});
+    sprite_sptr->setLocalSize(PLAYER_IMAGE_SIZE);
+    colisor_sptr = Colisor::createColisor("Player", (Transform*)this);
+    colisor_sptr->setLocalSize(PLAYER_HITBOX_SIZE);
 }
 std::shared_ptr<Player> Player::createPlayer(std::string asset, int item)
 {
-    if(item == 1) return std::make_shared<Player>("assets/arrascaeta.jpeg");//std::make_shared<PlayerPen>(asset);
-    // item pode ser substituido por um enum
+    if(item == 1) return std::make_shared<PlayerPen>(asset);
+    // "item" pode ser substituido por um enum
     // else if(item == tal) std::make_shared<tal>(asset)
     else return std::make_shared<Player>(asset);
 }
@@ -47,6 +50,7 @@ std::pair<float, float> Player::getPosFromRecordings(float t)
     for(i = 0; i < record.size()-1; i++) if(record[i+1].t > t) break;
     return record[i].pos;
 }
+bool Player::isAlive(){return alive;}
 
 void Player::startRec()
 {
@@ -56,12 +60,13 @@ void Player::startPast()
 {
 
 }
-void Player::updateRec(std::pair<float, float> pos, float t)
+void Player::updateRec(const std::pair<float, float>* posPtr, float t)
 {
-    appendPosToBuffer(pos);
-    pos = getPosFromBuffer();
+    if(posPtr != nullptr)appendPosToBuffer(*posPtr);
+    std::pair<float, float> pos = getPosFromBuffer();
     setGlobalPos(pos);
     record.push_back({pos,t});
+    if(colisor_sptr->getColisionsStartingWith("damaging").size() > 0) alive = false;
 }
 void Player::updatePast(float t)
 {
