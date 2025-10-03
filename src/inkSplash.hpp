@@ -4,10 +4,7 @@
 #include "transform.hpp"
 #include <memory>
 #include <utility>
-
-#define SPLASH_IMAGE_SIZE {50, 50}
-#define SPLASH_HITBOX_SIZE {50, 50}
-#define SPLASH_IMAGE "assets/orange.png"
+#include "gameConstants.hpp"
 
 class InkSplash : public Transform
 {

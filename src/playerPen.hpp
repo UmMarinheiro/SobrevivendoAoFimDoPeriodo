@@ -4,8 +4,7 @@
 #include <string>
 #include <vector>
 #include "inkSplash.hpp"
-
-#define SPLASH_INTERVAL_MS 2000
+#include "gameConstants.hpp"
 
 class PlayerPen : public Player
 {

@@ -4,10 +4,7 @@
 #include "sprite.hpp"
 #include <memory>
 #include <vector>
-
-#define BUFFERSIZE 8
-#define PLAYER_IMAGE_SIZE {50,50}
-#define PLAYER_HITBOX_SIZE {50,50}
+#include "gameConstants.hpp"
 
 std::pair<float, float> getRectCenter(cv::Rect r);
 
