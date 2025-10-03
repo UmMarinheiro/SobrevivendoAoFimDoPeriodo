@@ -22,8 +22,8 @@ std::vector<cv::Rect> GameInstance::getFaces(cv::Mat frame)
 
 void GameInstance::startTurn(int number)
 {
-    ended = false;
-    current = std::make_shared<Player>("assets/players/player" + std::to_string(number) + ".png");
+    turnEnded = false;
+    current = Player::createPlayer("assets/players/player" + std::to_string(number) + ".png", 1);
     
     current->startRec();
     for(auto played : past) played->startPast();
@@ -36,14 +36,20 @@ void GameInstance::updateTurn()
     std::vector<cv::Rect> faces = getFaces(frame);
     int elapsedTime = getTimeFromStart();
 
-    if(faces.size() > 0) current->updateRec(getRectCenter(faces[0]), elapsedTime);
+    if(faces.size() > 0) 
+    {
+        std::pair<float, float> pos = getRectCenter(faces[0]);
+        current->updateRec(&pos, elapsedTime);
+    }
+    else current->updateRec(nullptr, elapsedTime);
+    if(!current->isAlive()) ended = true;
     for(auto played : past) played->updatePast(elapsedTime);
 
     SpriteMan::windowFrame = frame;
     SpriteMan::tick();
 
     cv::imshow(wName, frame);
-    if(elapsedTime > TURN_DURATION_MS) ended = true;
+    if(elapsedTime > TURN_DURATION_MS)turnEnded = true;
 }
 void GameInstance::endTurn()
 {
@@ -60,4 +66,5 @@ int GameInstance::getTimeFromStart()
 {
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - startTime).count();
 }
-bool GameInstance::hasTurnEnded() {return ended;}
+bool GameInstance::hasTurnEnded() {return turnEnded;}
+bool GameInstance::hasGameEnded() {return ended;}

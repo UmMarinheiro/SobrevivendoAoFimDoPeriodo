@@ -17,6 +17,7 @@ private:
     std::shared_ptr<Player> current;
     std::chrono::time_point<std::chrono::steady_clock> startTime;
 
+    bool turnEnded = false;
     bool ended = false;
 
 public:
@@ -32,4 +33,5 @@ public:
 
     int getTimeFromStart();
     bool hasTurnEnded();
+    bool hasGameEnded();
 };

@@ -8,8 +8,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-
-#define MIN_PIXEL_FOR_COLISION 10
+#include "gameConstants.hpp"
 
 class Colisor : public UpperConnerTransform
 {

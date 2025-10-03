@@ -153,6 +153,10 @@ int main()
                     game->endTurn();
                     turno = PHOTO;
                 }
+                if(game->hasGameEnded())
+                {
+                    estado = SAIR_JOGO; 
+                }
             }
 
             char key = (char)waitKey(10);
@@ -161,8 +165,8 @@ int main()
             if (key == 'n') turno = PHOTO; // N força novo turno PHOTO (para testes)
         }
         else if (estado == SAIR_JOGO) {
-            game.reset();
-            estado = MENU;
+            game.reset(); // Implementar função para obter relatorio de jogo
+            estado = MENU;  // Implementar GAME OVER aqui!!!
         }
         else if (estado == OPTIONS) {
             gameMenu.showOptionsMenu();
