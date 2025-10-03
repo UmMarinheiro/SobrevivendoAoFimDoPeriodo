@@ -28,11 +28,13 @@ void PlayerPen::updateRec(const std::pair<float, float>* pos, float t)
 {
     Player::updateRec(pos, t);
     tryMakeSplash(t, false);
+    for(auto& splash_sptr : splashes) splash_sptr -> update();
 }
 void PlayerPen::updatePast(float t)
 {
     Player::updatePast(t);
     tryMakeSplash(t, true);
+    for(auto& splash_sptr : splashes) splash_sptr -> update();
 }
 void PlayerPen::endRec()
 {
