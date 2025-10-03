@@ -3,10 +3,12 @@
 #include <memory>
 #include "player.hpp"
 #include "gameConstants.hpp"
+#include "globals.hpp"
 
 class GameInstance
 {
 private:
+    
     std::string& wName;
     double& scale;
     bool& tryflip;

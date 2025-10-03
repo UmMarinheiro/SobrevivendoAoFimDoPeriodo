@@ -6,6 +6,8 @@
 #include <filesystem>
 #include <sstream>
 #include <vector>
+#include <random>
+#include <fstream>
 
 using namespace std;
 using namespace cv;
@@ -49,6 +51,129 @@ void handleMenuState(Menu& gameMenu) {
     if (key == 27) estado = SAIR; 
 }
 
+struct ItemData {
+    string folderName;
+    string imagePath;
+    string description;
+};
+
+ItemData getRandomItem() {
+    ItemData item;
+    vector<string> itemFolders;
+    
+    string itemsPath = "assets/items";
+    
+    if (!fs::exists(itemsPath)) {
+        cout << "ERRO: Diretório assets/items não encontrado!" << endl;
+        return item;
+    }
+    
+    for (const auto& entry : fs::directory_iterator(itemsPath)) {
+        if (entry.is_directory()) {
+            itemFolders.push_back(entry.path().filename().string());
+        }
+    }
+    
+    if (itemFolders.empty()) {
+        cout << "ERRO: Nenhuma pasta de item encontrada em assets/items!" << endl;
+        return item;
+    }
+    
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(0, itemFolders.size() - 1);
+    
+    string selectedFolder = itemFolders[dis(gen)];
+    item.folderName = selectedFolder;
+    
+    string folderPath = itemsPath + "/" + selectedFolder;
+    item.imagePath = folderPath + "/imagem.png";
+    string descriptionPath = folderPath + "/descricao.txt";
+    
+    ifstream descFile(descriptionPath);
+    if (descFile.is_open()) {
+        getline(descFile, item.description);
+        descFile.close();
+    } else {
+        cout << "AVISO: Arquivo descricao.txt não encontrado em " << folderPath << endl;
+        item.description = "Sem descrição disponível";
+    }
+    
+    if (!fs::exists(item.imagePath)) {
+        cout << "AVISO: imagem.png não encontrada em " << folderPath << endl;
+    }
+    
+    cout << "Item selecionado: " << selectedFolder << endl;
+    
+    return item;
+}
+
+void showItemScreen(const string& itemPath, const string& itemName, const string& itemDescription) {
+    Mat blackScreen = Mat::zeros(480, 640, CV_8UC3);
+    
+    Mat itemImage = imread(itemPath, IMREAD_UNCHANGED);
+    
+    if (!itemImage.empty()) {
+        int maxSize = 300;
+        if (itemImage.cols > maxSize || itemImage.rows > maxSize) {
+            double scale = min((double)maxSize / itemImage.cols, (double)maxSize / itemImage.rows);
+            resize(itemImage, itemImage, Size(), scale, scale, INTER_LINEAR);
+        }
+        
+        int itemX = (blackScreen.cols - itemImage.cols) / 2;
+        int itemY = (blackScreen.rows - itemImage.rows) / 2;
+        
+        drawImage(blackScreen, itemImage, itemX, itemY);
+        
+        int fontFace = FONT_HERSHEY_SIMPLEX;
+        double fontScale = 1.2;
+        int thickness = 2;
+        
+        int baseline = 0;
+        Size textSize = getTextSize(itemName, fontFace, fontScale, thickness, &baseline);
+        
+        int textX = (blackScreen.cols - textSize.width) / 2;
+        int textY = itemY - 30;
+        
+        putText(blackScreen, itemName, Point(textX + 2, textY + 2), 
+                fontFace, fontScale, Scalar(0, 0, 0), thickness + 1);
+        putText(blackScreen, itemName, Point(textX, textY), 
+                fontFace, fontScale, Scalar(255, 255, 255), thickness);
+        
+        double descFontScale = 0.7;
+        int descThickness = 1;
+        
+        Size descSize = getTextSize(itemDescription, fontFace, descFontScale, descThickness, &baseline);
+        int descX = (blackScreen.cols - descSize.width) / 2;
+        int descY = itemY + itemImage.rows + 40;
+        
+        putText(blackScreen, itemDescription, Point(descX + 1, descY + 1), 
+                fontFace, descFontScale, Scalar(0, 0, 0), descThickness + 1);
+        putText(blackScreen, itemDescription, Point(descX, descY), 
+                fontFace, descFontScale, Scalar(200, 200, 200), descThickness);
+    } else {
+        string errorMsg = "Item: " + itemName;
+        putText(blackScreen, errorMsg, Point(50, 240), 
+                FONT_HERSHEY_SIMPLEX, 1.0, Scalar(255, 255, 255), 2);
+    }
+    
+    imshow(wName, blackScreen);
+    
+    int64 startTime = getTickCount();
+    double elapsedSeconds = 0;
+    
+    while (elapsedSeconds < 5.0) {
+        int key = waitKey(100);
+        
+        if (key == 32 || key == ' ') {
+            break;
+        }
+        
+        int64 currentTime = getTickCount();
+        elapsedSeconds = (currentTime - startTime) / getTickFrequency();
+    }
+}
+
 void handleGameState(shared_ptr<GameInstance> game, CascadeClassifier& cascade, VideoCapture& capture) {
     Mat frame;
     capture >> frame;
@@ -64,8 +189,17 @@ void handleGameState(shared_ptr<GameInstance> game, CascadeClassifier& cascade, 
             break;
             
         case ITEM:
+            {
+            ItemData randomItem = getRandomItem();
+            if (!randomItem.folderName.empty()) {
+                showItemScreen(randomItem.imagePath, ("Você recebeu o item: %s ", randomItem.folderName), randomItem.description);
+            } else {
+                cout << "ERRO: Não foi possível carregar um item!" << endl;
+            }
+            }
             detectAndDraw(frame, cascade, scale, tryflip);
             game->startTurn(obterProximoNumeroJogador() - 1);
+
             turno = POSITION;
             break;
             
@@ -73,6 +207,7 @@ void handleGameState(shared_ptr<GameInstance> game, CascadeClassifier& cascade, 
             game->updateTurn();
             if (game->hasTurnEnded()) {
                 game->endTurn();
+                
                 turno = PHOTO;
             }
             break;
