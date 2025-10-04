@@ -3,11 +3,13 @@
 #include <memory>
 #include "player.hpp"
 #include "gameConstants.hpp"
+#include "globals.hpp"
 
 enum GameState {POSITIONING, START_RUNNING, RUNNING, TURN_ENDED, GAME_ENDED};
 class GameInstance
 {
 private:
+    
     std::string& wName;
     double& scale;
     bool& tryflip;

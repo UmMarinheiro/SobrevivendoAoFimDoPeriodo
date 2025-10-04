@@ -5,6 +5,7 @@
 #include <chrono>
 #include <memory>
 #include <string>
+#include "globals.hpp"
 
 GameInstance::GameInstance(std::string& wName, double& scale, bool& tryflip,
         cv::CascadeClassifier& cascade, cv::VideoCapture& capture) 
