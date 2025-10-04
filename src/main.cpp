@@ -117,17 +117,24 @@ int main()
 
     shared_ptr<GameInstance> game;
 
+    if(estado == MENU) gameMenu.playBackgroundMusic();
+
     while (estado != SAIR) {
         if (estado == MENU) {
             gameMenu.showMainMenu();
             int key = waitKey(30);
             if (key == 27) estado = SAIR; // ESC para sair
+            if (key == 'j') audioManager.setSoundVolume( (audioManager.getSoundVolume() + 10));
+            if (key == 'k') audioManager.setSoundVolume( (audioManager.getSoundVolume() - 10));
+            gameMenu.updateAnimations();
         }
         else if (estado == JOGO) {
             game = make_shared<GameInstance>(wName, scale, tryflip,
                 cascade, capture);
             estado = RODAR_JOGO;
             turno = PHOTO;
+            if (key == 'f') gameMenu.desbloquearItem("Mochila");
+            if (key == 'g') gameMenu.desbloquearItem("Marmita");
         }
         else if (estado == RODAR_JOGO){
             Mat frame;
@@ -179,7 +186,7 @@ int main()
             if (key == 27) estado = SAIR;
         }
     }
-
+    gameMenu.stopBackgroundMusic();
     return 0;
 }
 
