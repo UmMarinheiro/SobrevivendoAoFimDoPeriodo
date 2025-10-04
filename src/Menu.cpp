@@ -58,7 +58,7 @@ void Menu::loadMenuImages() {
         menuImages["main_bg"] = bgMain;
     }
     
-    Mat bgOptions = imread("assets/images/bg_options.png", IMREAD_COLOR);
+    Mat bgOptions = imread("assets/images/options_bg.png", IMREAD_COLOR);
     if (!bgOptions.empty()) {
         menuImages["options_bg"] = bgOptions;
     }

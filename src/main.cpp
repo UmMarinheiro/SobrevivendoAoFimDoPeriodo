@@ -50,6 +50,8 @@ int main()
 
     createPlayersDirectory();
 
+    char key = (char)waitKey(30);
+
     int camWidth = 1920;
     int camHeight = 1080;
     
@@ -62,15 +64,19 @@ int main()
     if(estado == MENU) gameMenu.playBackgroundMusic();
 
     while (estado != SAIR) {
+
         switch (estado) {
             case MENU:
                 handleMenuState(gameMenu);
+                gameMenu.updateAnimations();
                 break;
                 
             case JOGO:
                 game = make_shared<GameInstance>(wName, scale, tryflip, cascade, capture);
                 estado = RODAR_JOGO;
                 turno = PHOTO;
+                //gameMenu.desbloquearItem("Mochila");
+                //gameMenu.desbloquearItem("Marmita");
                 break;
                 
             case RODAR_JOGO:
@@ -89,6 +95,13 @@ int main()
             case DESC:
                 handleDescriptionState(gameMenu);
                 break;
+        }
+        switch(key){
+            case 'j': audioManager.setSoundVolume( (audioManager.getSoundVolume() + 10)); break;
+            case 'k': audioManager.setSoundVolume( (audioManager.getSoundVolume() - 10)); break;
+            if (key == 'g') gameMenu.desbloquearItem("Marmita");
+            if (key == 'g') gameMenu.desbloquearItem("Mochila");
+            case 27: estado = SAIR; break;
         }
     }
     gameMenu.stopBackgroundMusic();

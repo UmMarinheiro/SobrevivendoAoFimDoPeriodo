@@ -2,6 +2,7 @@
 #include "opencvUtils.hpp"
 #include "sprite.hpp"
 #include "colisor.hpp"
+#include "Menu.hpp"
 #include <iostream>
 #include <filesystem>
 #include <sstream>
