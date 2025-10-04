@@ -40,6 +40,7 @@ string wName = "Game";
 bool tryflip = false;
 double scale = 1;
 
+AudioManager audioManager;
 CascadeClassifier cascade;
 Mat img;
 VideoCapture capture;
@@ -133,6 +134,7 @@ int main()
                 cascade, capture);
             estado = RODAR_JOGO;
             turno = PHOTO;
+            int key = waitKey(30);
             if (key == 'f') gameMenu.desbloquearItem("Mochila");
             if (key == 'g') gameMenu.desbloquearItem("Marmita");
         }
