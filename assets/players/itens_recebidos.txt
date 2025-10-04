@@ -1,4 +1,2 @@
-player 2 - Mochila
-player 3 - Marmita
-player 4 - Marmita
-player 1 - Liga Elástica
+player 4 - Mochila
+player 5 - Mochila

@@ -55,6 +55,7 @@ struct ItemData {
     string folderName;
     string imagePath;
     string description;
+    int index = -1; 
 };
 
 ItemData getRandomItem() {
@@ -83,8 +84,10 @@ ItemData getRandomItem() {
     mt19937 gen(rd());
     uniform_int_distribution<> dis(0, itemFolders.size() - 1);
     
-    string selectedFolder = itemFolders[dis(gen)];
+    int selectedIndex = dis(gen);
+    string selectedFolder = itemFolders[selectedIndex];
     item.folderName = selectedFolder;
+    item.index = selectedIndex;
     
     string folderPath = itemsPath + "/" + selectedFolder;
     item.imagePath = folderPath + "/imagem.png";
@@ -203,12 +206,12 @@ void handleGameState(shared_ptr<GameInstance> game, CascadeClassifier& cascade, 
             } else {
                 cout << "ERRO: Não foi possível carregar um item!" << endl;
             }
-            }
             detectAndDraw(frame, cascade, scale, tryflip);
-            game->startTurn(obterProximoNumeroJogador() - 1);
+            game->startTurn(obterProximoNumeroJogador() - 1, randomItem.index); // Use o índice aqui
 
             turno = POSITION;
             break;
+            }
             
         case POSITION:
             game->updateTurn();
