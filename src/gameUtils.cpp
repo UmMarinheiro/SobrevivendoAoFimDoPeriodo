@@ -193,6 +193,13 @@ void handleGameState(shared_ptr<GameInstance> game, CascadeClassifier& cascade, 
             ItemData randomItem = getRandomItem();
             if (!randomItem.folderName.empty()) {
                 showItemScreen(randomItem.imagePath, ("Você recebeu o item: %s ", randomItem.folderName), randomItem.description);
+
+                int playerNumber = obterProximoNumeroJogador() - 1;
+                std::ofstream itensFile("assets/players/itens_recebidos.txt", std::ios::app);
+                if (itensFile.is_open()) {
+                    itensFile << "player " << playerNumber << " - " << randomItem.folderName << std::endl;
+                    itensFile.close();
+                }
             } else {
                 cout << "ERRO: Não foi possível carregar um item!" << endl;
             }
