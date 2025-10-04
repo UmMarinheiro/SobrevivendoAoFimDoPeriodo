@@ -80,7 +80,7 @@ int main()
                 break;
                 
             case RODAR_JOGO:
-                handleGameState(game, cascade, capture);
+                handleGameState(game, cascade, capture, gameMenu);
                 break;
                 
             case SAIR_JOGO:

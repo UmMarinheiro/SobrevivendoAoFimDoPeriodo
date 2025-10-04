@@ -77,16 +77,6 @@ void Menu::loadMenuImages() {
     if(!quadradoIcon.empty()){
         menuImages["quadrado"] = quadradoIcon;
     }
-    
-    Mat quadrado1Icon = imread("assets/images/orange.png", IMREAD_UNCHANGED);
-    if(!quadrado1Icon.empty()){
-        menuImages["quadrado1"] = quadrado1Icon;
-    }
-    
-    Mat quadrado2Icon = imread("assets/images/arrascaeta.jpeg", IMREAD_UNCHANGED);
-    if(!quadrado2Icon.empty()){
-        menuImages["quadrado2"] = quadrado2Icon;
-    }
     Mat volumePlus = imread("assets/images/plus.png", IMREAD_UNCHANGED);
     if(!volumePlus.empty()){
         menuImages["volumePlus"] = volumePlus;
@@ -103,6 +93,10 @@ void Menu::loadMenuImages() {
     Mat Marmita = imread("assets/itens/marmita.png", IMREAD_UNCHANGED);
     if(!Marmita.empty()){  
         menuImages["Marmita"] = Marmita;
+    }
+    Mat Liga = imread("assets/itens/liga.png", IMREAD_UNCHANGED);
+    if(!Liga.empty()){  
+        menuImages["Liga"] = Liga;
     }
 }
 //=====================================================================================================================
@@ -152,7 +146,7 @@ void Menu::inicializarItensDescricao() {
     itensDescricao = {
         {"Mochila", "Mochila", "Item essencial para carregar materiais academicos", false, posicoes[0]},
         {"Marmita", "Marmita", "Refeicao caseira para manter o foco nas aulas", false, posicoes[1]},
-        //{"Caderno", "Caderno", "Para anotar todas as materias importantes", false, posicoes[3]},
+        {"Liga", "Liga", "Otima para guardar dinheiro, mas tambem para atirar nos colegas", false, posicoes[2]},
         //{"Calculadora", "Calculadora", "Essencial para calculos complexos", false, posicoes[4]},
         //{"Garrafa", "Garrafa de Agua", "Hidratacao é fundamental para o aprendizado", false, posicoes[5]}
     };

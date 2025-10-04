@@ -14,7 +14,6 @@ using namespace std;
 using namespace cv;
 namespace fs = std::filesystem;
 
-
 bool initializeCamera(VideoCapture& capture) {
     if (!capture.open(0)) {
         cout << "Erro ao abrir a câmera!" << endl;
@@ -57,6 +56,7 @@ struct ItemData {
     string imagePath;
     string description;
     int index = -1; 
+    string itemKey;
 };
 
 ItemData getRandomItem() {
@@ -89,7 +89,11 @@ ItemData getRandomItem() {
     string selectedFolder = itemFolders[selectedIndex];
     item.folderName = selectedFolder;
     item.index = selectedIndex;
-    
+
+    if(selectedFolder == "Marmita") {item.itemKey = "Marmita";}
+    else if(selectedFolder == "Mochila") {item.itemKey = "Mochila";}
+    else if(selectedFolder == "Liga") {item.itemKey = "Liga";}
+
     string folderPath = itemsPath + "/" + selectedFolder;
     item.imagePath = folderPath + "/imagem.png";
     string descriptionPath = folderPath + "/descricao.txt";
@@ -178,7 +182,7 @@ void showItemScreen(const string& itemPath, const string& itemName, const string
     }
 }
 
-void handleGameState(shared_ptr<GameInstance> game, CascadeClassifier& cascade, VideoCapture& capture) {
+void handleGameState(shared_ptr<GameInstance> game, CascadeClassifier& cascade, VideoCapture& capture, Menu& gameMenu) {
     Mat frame;
     capture >> frame;
     if (frame.empty()) return;
@@ -193,10 +197,16 @@ void handleGameState(shared_ptr<GameInstance> game, CascadeClassifier& cascade, 
             break;
             
         case ITEM:
-            {
+        {
             ItemData randomItem = getRandomItem();
             if (!randomItem.folderName.empty()) {
                 showItemScreen(randomItem.imagePath, ("Você recebeu o item: %s ", randomItem.folderName), randomItem.description);
+
+                // Desbloquear o item no menu
+                if (!randomItem.itemKey.empty()) {
+                    gameMenu.desbloquearItem(randomItem.itemKey);
+                    cout << "Item desbloqueado: " << randomItem.itemKey << endl;
+                }
 
                 int playerNumber = obterProximoNumeroJogador() - 1;
                 std::ofstream itensFile("assets/players/itens_recebidos.txt", std::ios::app);
@@ -208,7 +218,7 @@ void handleGameState(shared_ptr<GameInstance> game, CascadeClassifier& cascade, 
                 cout << "ERRO: Não foi possível carregar um item!" << endl;
             }
             detectAndDraw(frame, cascade, scale, tryflip);
-            game->startTurn(obterProximoNumeroJogador() - 1, randomItem.folderName); 
+            game->startTurn(obterProximoNumeroJogador() - 1, randomItem.index);
 
             turno = POSITION;
             break;
@@ -218,12 +228,7 @@ void handleGameState(shared_ptr<GameInstance> game, CascadeClassifier& cascade, 
             game->updateTurn();
             if (game->hasTurnEnded()) {
                 game->endTurn();
-                
                 turno = PHOTO;
-            }
-            else if(game->hasGameEnded())
-            {
-                estado = SAIR_JOGO; 
             }
             break;
     }
@@ -244,6 +249,7 @@ void handleDescriptionState(Menu& gameMenu) {
     gameMenu.showDescriptionMenu();
     int key = waitKey(30);
     if (key == 27) estado = SAIR;
+    if(key == 'g') gameMenu.desbloquearItem("Liga");
 }
 
 void handlePhotoTurn(Mat& frame, CascadeClassifier& cascade) {

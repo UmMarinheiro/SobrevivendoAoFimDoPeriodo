@@ -34,7 +34,7 @@ int obterProximoNumeroJogador();
 
 
 void handleMenuState(Menu& gameMenu);
-void handleGameState(std::shared_ptr<GameInstance> game, cv::CascadeClassifier& cascade, cv::VideoCapture& capture);
+void handleGameState(std::shared_ptr<GameInstance> game, cv::CascadeClassifier& cascade, cv::VideoCapture& capture, Menu& gameMenu);
 void handleOptionsState(Menu& gameMenu);
 void handleDescriptionState(Menu& gameMenu);
 

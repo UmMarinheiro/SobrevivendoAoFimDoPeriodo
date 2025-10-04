@@ -10,7 +10,6 @@
 #define PLAYER_HITBOX_SIZE {30,30}
 
 // Caneta estourada
-#define PLAYERPEN_NAME "Caneta Estourada"
 #define SPLASH_INTERVAL_MS 2500
 #define SPLASH_GROWTH_MS 2000
 #define SPLASH_START_SIZE {10, 10}
