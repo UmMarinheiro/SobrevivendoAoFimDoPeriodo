@@ -14,11 +14,9 @@ Player::Player(std::string asset)
     colisor_sptr = Colisor::createColisor("Player", (Transform*)this);
     colisor_sptr->setLocalSize(PLAYER_HITBOX_SIZE);
 }
-std::shared_ptr<Player> Player::createPlayer(std::string asset, int item)
+std::shared_ptr<Player> Player::createPlayer(std::string asset, std::string item_name)
 {
-    if(item == 1) return std::make_shared<PlayerPen>(asset);
-    // "item" pode ser substituido por um enum
-    // else if(item == tal) std::make_shared<tal>(asset)
+    if(item_name == PLAYERPEN_NAME) return std::make_shared<PlayerPen>(asset);
     else return std::make_shared<Player>(asset);
 }
 

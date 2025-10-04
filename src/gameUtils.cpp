@@ -208,7 +208,7 @@ void handleGameState(shared_ptr<GameInstance> game, CascadeClassifier& cascade, 
                 cout << "ERRO: Não foi possível carregar um item!" << endl;
             }
             detectAndDraw(frame, cascade, scale, tryflip);
-            game->startTurn(obterProximoNumeroJogador() - 1, randomItem.index); // Use o índice aqui
+            game->startTurn(obterProximoNumeroJogador() - 1, randomItem.folderName); 
 
             turno = POSITION;
             break;
@@ -220,6 +220,10 @@ void handleGameState(shared_ptr<GameInstance> game, CascadeClassifier& cascade, 
                 game->endTurn();
                 
                 turno = PHOTO;
+            }
+            else if(game->hasGameEnded())
+            {
+                estado = SAIR_JOGO; 
             }
             break;
     }

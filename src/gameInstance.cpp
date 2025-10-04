@@ -22,7 +22,7 @@ std::vector<cv::Rect> GameInstance::getFaces(cv::Mat frame)
     return ::getFaces(frame, cascade);
 }
 
-void GameInstance::startTurn(int number, int item)
+void GameInstance::startTurn(int number, std::string item)
 {
     current = Player::createPlayer("assets/players/player" + std::to_string(number) + ".png", item);
     startPositioning();

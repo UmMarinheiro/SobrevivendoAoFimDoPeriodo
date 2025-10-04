@@ -1,6 +1,7 @@
 #pragma once
 #include <chrono>
 #include <memory>
+#include <string>
 #include "player.hpp"
 #include "gameConstants.hpp"
 #include "globals.hpp"
@@ -33,7 +34,7 @@ public:
     cv::Mat getFrame();
     std::vector<cv::Rect> getFaces(cv::Mat frame);
     
-    void startTurn(int number, int item);
+    void startTurn(int number, std::string item);
     void updateTurn();
     void endTurn();
 
