@@ -4,6 +4,7 @@
 #include "player.hpp"
 #include "gameConstants.hpp"
 
+enum GameState {POSITIONING, START_RUNNING, RUNNING, TURN_ENDED, GAME_ENDED};
 class GameInstance
 {
 private:
@@ -17,9 +18,12 @@ private:
     std::shared_ptr<Player> current;
     std::chrono::time_point<std::chrono::steady_clock> startTime;
 
-    bool turnEnded = false;
-    bool ended = false;
+    GameState state;
 
+    void startPositioning();
+    void updatePositioning();
+    void startRunning();
+    void updateRunning();
 public:
     GameInstance(std::string& wName, double& scale, bool& tryflip,
         cv::CascadeClassifier& cascade, cv::VideoCapture& capture);

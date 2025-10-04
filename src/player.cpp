@@ -50,8 +50,33 @@ std::pair<float, float> Player::getPosFromRecordings(float t)
     for(i = 0; i < record.size()-1; i++) if(record[i+1].t > t) break;
     return record[i].pos;
 }
+std::pair<float, float> Player::handleRawRecPos(const std::pair<float, float>* posPtr)
+{
+    if(posPtr != nullptr) appendPosToBuffer(*posPtr);
+    std::pair<float, float> pos = getPosFromBuffer();
+    setGlobalPos(pos);
+    return pos;
+}
 bool Player::isAlive(){return alive;}
 
+
+void Player::startPositioningRec()
+{
+
+}
+void Player::startPositioningPast()
+{
+    setGlobalPos(record[0].pos);
+}
+void Player::updatePositioningRec(const std::pair<float, float>* posPtr)
+{
+    std::pair<float, float> pos = handleRawRecPos(posPtr);
+    record[0] = {pos, 0};
+}
+void Player::updatePositioningPast() 
+{
+    
+}
 void Player::startRec()
 {
 
@@ -62,9 +87,7 @@ void Player::startPast()
 }
 void Player::updateRec(const std::pair<float, float>* posPtr, float t)
 {
-    if(posPtr != nullptr)appendPosToBuffer(*posPtr);
-    std::pair<float, float> pos = getPosFromBuffer();
-    setGlobalPos(pos);
+    std::pair<float, float> pos = handleRawRecPos(posPtr);
     record.push_back({pos,t});
     if(colisor_sptr->getColisionsStartingWith("damaging").size() > 0) alive = false;
 }
