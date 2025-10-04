@@ -30,6 +30,7 @@ string wName = "Game";
 bool tryflip = false;
 double scale = 1;
 
+AudioManager audioManager;
 CascadeClassifier cascade;
 Mat img;
 VideoCapture capture;
@@ -57,6 +58,8 @@ int main()
     gameMenu.setupMouseCallback();
 
     shared_ptr<GameInstance> game;
+
+    if(estado == MENU) gameMenu.playBackgroundMusic();
 
     while (estado != SAIR) {
         switch (estado) {
@@ -88,6 +91,6 @@ int main()
                 break;
         }
     }
-
+    gameMenu.stopBackgroundMusic();
     return 0;
 }

@@ -1,380 +1,471 @@
 #include "Menu.hpp"
 #include <iostream>
+#include <cstdlib>
 
-Menu::Menu(int width, int height, const std::string& wName) 
-    : camWidth(width), camHeight(height), windowName(wName) {
+using namespace cv;
+using namespace std;
+
+Menu::Menu(int width, int height, const string& wName) 
+    : camWidth(width), camHeight(height), windowName(wName),
+      animBotaoJogar(Rect(1600, 600, 240, 60), "Play"),     
+      animBotaoOpcoes(Rect(1600, 700, 240, 60), "Options"),
+      animBotaoDesc(Rect(1600, 800, 240, 60), "Description"),
+      animBotaoSair(Rect(1600, 900, 240, 60), "Exit"),
+      animBotaoLeave(Rect(camWidth * 0.5 - 90, camHeight * 0.5 + 250, 240, 60), "Leave"),
+      wasJogarHovered(false), wasOpcoesHovered(false), wasDescHovered(false), 
+      wasSairHovered(false), wasLeaveHovered(false) {
     loadMenuImages();
+    initializeButtonAnimations();
+    inicializarItensDescricao();
 }
+
+int v = 5;
 
 Menu::~Menu(){}
 
-// Carrega todas as imagens dos menus
+AudioManager audio;
+
+void Menu::playSound(const string& filePath) {
+    string command;
+
+    command = "aplay \"" + filePath + "\" &";
+
+    int result = system(command.c_str());
+    if (result != 0) {
+        cout << "Erro ao reproduzir audio: " << filePath << endl;
+    }
+}
+//=====================================================================================================================
+void Menu::playHoverSound() {
+    playSound("assets/audio/click.wav");
+}
+
+void Menu::playClickSound() {
+    playSound("assets/audio/click.wav");
+}
+
+void Menu::playBackgroundMusic() {
+    system("aplay assets/audio/background.wav &");
+}
+
+void Menu::stopBackgroundMusic() {
+    system("pkill aplay 2>/dev/null");
+}
+//=====================================================================================================================
 void Menu::loadMenuImages() {
-    // Carrega imagens de fundo para diferentes menus
-    Mat bgMain = imread("assets/naogrita.jpeg", IMREAD_COLOR);
+    Mat bgMain = imread("assets/images/bck.png", IMREAD_COLOR);
     if (!bgMain.empty()) {
         menuImages["main_bg"] = bgMain;
     }
     
-    Mat bgOptions = imread("assets/options_bg.png", IMREAD_COLOR);
+    Mat bgOptions = imread("assets/images/bg_options.png", IMREAD_COLOR);
     if (!bgOptions.empty()) {
         menuImages["options_bg"] = bgOptions;
     }
     
-    // Carrega ícones/logos
-    Mat logo = imread("assets/logo.png", IMREAD_UNCHANGED);
+    Mat logo = imread("assets/images/logo.png", IMREAD_UNCHANGED);
     if (!logo.empty()) {
         menuImages["logo"] = logo;
     }
-    Mat descriptionIcon = imread("assets/desc_icon.png", IMREAD_UNCHANGED);
+    
+    Mat descriptionIcon = imread("assets/images/desc_icon.png", IMREAD_UNCHANGED);
     if (!descriptionIcon.empty()){
         menuImages["description_icon"] = descriptionIcon;
     }
-
-    // Carrega ícones dos botões
-    Mat playIcon = imread("assets/orange.png", IMREAD_UNCHANGED);
-    if (!playIcon.empty()) {
-        menuImages["play_icon"] = playIcon;
-    }
     
-    Mat optionsIcon = imread("assets/orange.png", IMREAD_UNCHANGED);
-    if (!optionsIcon.empty()) {
-        menuImages["options_icon"] = optionsIcon;
-    }
-    
-    Mat exitIcon = imread("assets/orange.png", IMREAD_UNCHANGED);
-    if (!exitIcon.empty()) {
-        menuImages["exit_icon"] = exitIcon;
-    }
-    
-    Mat descIcon = imread("assets/orange.png", IMREAD_UNCHANGED);
-    if (!descIcon.empty()) {
-        menuImages["desc_icon"] = descIcon;
-    }
-    //Quadrados do description
-    Mat quadradoIcon = imread("assets/oscar.png", IMREAD_UNCHANGED);
+    Mat quadradoIcon = imread("assets/images/arrascaeta.jpeg", IMREAD_UNCHANGED);
     if(!quadradoIcon.empty()){
         menuImages["quadrado"] = quadradoIcon;
     }
-    Mat quadrado1Icon = imread("assets/orange.png", IMREAD_UNCHANGED);
+    
+    Mat quadrado1Icon = imread("assets/images/orange.png", IMREAD_UNCHANGED);
     if(!quadrado1Icon.empty()){
         menuImages["quadrado1"] = quadrado1Icon;
     }
-    Mat quadrado2Icon = imread("assets/quadrado2.png", IMREAD_UNCHANGED);
+    
+    Mat quadrado2Icon = imread("assets/images/arrascaeta.jpeg", IMREAD_UNCHANGED);
     if(!quadrado2Icon.empty()){
         menuImages["quadrado2"] = quadrado2Icon;
     }
-    Mat quadrado3Icon = imread("assets/quadrado3.png", IMREAD_UNCHANGED);
-    if(!quadrado3Icon.empty()){
-        menuImages["quadrado3"] = quadrado3Icon;
+    Mat volumePlus = imread("assets/images/plus.png", IMREAD_UNCHANGED);
+    if(!volumePlus.empty()){
+        menuImages["volumePlus"] = volumePlus;
     }
-    Mat quadrado4Icon = imread("assets/quadrado4.png", IMREAD_UNCHANGED);
-    if(!quadrado4Icon.empty()){
-        menuImages["quadrado4"] = quadrado4Icon;
+    Mat volumeMinus = imread("assets/images/minus.png", IMREAD_UNCHANGED);
+    if(!volumeMinus.empty()){
+        menuImages["volumeMinus"] = volumeMinus;
     }
-    Mat quadrado5Icon = imread("assets/quadrado5.png", IMREAD_UNCHANGED);
-    if(!quadrado5Icon.empty()){
-        menuImages["quadrado5"] = quadrado5Icon;
+//===================================================ICONES DOS ITENS=================================================================
+    Mat Mochila = imread("assets/itens/mochila.png", IMREAD_UNCHANGED);
+    if(!Mochila.empty()){
+        menuImages["Mochila"] = Mochila;
     }
-    Mat quadrado6Icon = imread("assets/quadrado6.png", IMREAD_UNCHANGED);
-    if(!quadrado6Icon.empty()){
-        menuImages["quadrado6"] = quadrado6Icon;
+    Mat Marmita = imread("assets/itens/marmita.png", IMREAD_UNCHANGED);
+    if(!Marmita.empty()){  
+        menuImages["Marmita"] = Marmita;
     }
-    Mat quadrado7Icon = imread("assets/quadrado7.png", IMREAD_UNCHANGED);
-    if(!quadrado7Icon.empty()){
-        menuImages["quadrado7"] = quadrado7Icon;
-    }
-    Mat quadrado8Icon = imread("assets/quadrado8.png", IMREAD_UNCHANGED);
-    if(!quadrado8Icon.empty()){
-        menuImages["quadrado8"] = quadrado8Icon;
+}
+//=====================================================================================================================
+void Menu::initializeButtonAnimations() {
+    animBotaoJogar.setStaticFrame(Scalar(90, 50, 30));
+    animBotaoJogar.hoverAnimation.generatePulseFrames(240, 60, Scalar(90, 50, 30), 10);
+    animBotaoJogar.hoverAnimation.setFrameDuration(0.06);
+    
+    animBotaoOpcoes.setStaticFrame(Scalar(90, 50, 30));
+    animBotaoOpcoes.hoverAnimation.generatePulseFrames(240, 60, Scalar(90, 50, 30), 10);
+    animBotaoOpcoes.hoverAnimation.setFrameDuration(0.06);
+    
+    animBotaoDesc.setStaticFrame(Scalar(90, 50, 30));
+    animBotaoDesc.hoverAnimation.generatePulseFrames(240, 60, Scalar(90, 50, 30), 10);
+    animBotaoDesc.hoverAnimation.setFrameDuration(0.06);
+    
+    animBotaoSair.setStaticFrame(Scalar(90, 50, 30));
+    animBotaoSair.hoverAnimation.generatePulseFrames(240, 60, Scalar(90, 50, 30), 10);
+    animBotaoSair.hoverAnimation.setFrameDuration(0.06);
+    
+    animBotaoLeave.setStaticFrame(Scalar(90, 50, 30));
+    animBotaoLeave.hoverAnimation.generatePulseFrames(240, 60, Scalar(90, 50, 30), 10);
+    animBotaoLeave.hoverAnimation.setFrameDuration(0.06);
+}
+//=====================================================================================================================
+void Menu::updateAnimations() {
+    animBotaoJogar.updateAnimation();
+    animBotaoOpcoes.updateAnimation();
+    animBotaoDesc.updateAnimation();
+    animBotaoSair.updateAnimation();
+    animBotaoLeave.updateAnimation();
+}
+void Menu::inicializarItensDescricao() {
+    itensDescricao.clear();
+    
+    // Definir todas as posições dos quadrados primeiro
+    vector<Rect> posicoes = {
+        Rect(450, 350, 100, 100),
+        Rect(600, 350, 100, 100),
+        Rect(750, 350, 100, 100),
+        Rect(900, 350, 100, 100),
+        Rect(1050, 350, 100, 100),
+        Rect(450, 500, 100, 100)
+    };
+    
+    // Adicionar todos os itens possíveis (inicialmente bloqueados)
+    itensDescricao = {
+        {"Mochila", "Mochila", "Item essencial para carregar materiais academicos", false, posicoes[0]},
+        {"Marmita", "Marmita", "Refeicao caseira para manter o foco nas aulas", false, posicoes[1]},
+        //{"Caderno", "Caderno", "Para anotar todas as materias importantes", false, posicoes[3]},
+        //{"Calculadora", "Calculadora", "Essencial para calculos complexos", false, posicoes[4]},
+        //{"Garrafa", "Garrafa de Agua", "Hidratacao é fundamental para o aprendizado", false, posicoes[5]}
+    };
+}
+
+void Menu::desbloquearItem(const string& itemKey) {
+    for (auto& item : itensDescricao) {
+        if (item.key == itemKey && !item.desbloqueado) {
+            item.desbloqueado = true;
+            cout << "Item desbloqueado: " << item.nome << endl;
+            break;
+        }
     }
 }
 
-// Método para desenhar imagem com suporte a transparência e redimensionamento
+bool Menu::isItemDesbloqueado(const string& itemKey) const {
+    for (const auto& item : itensDescricao) {
+        if (item.key == itemKey) {
+            return item.desbloqueado;
+        }
+    }
+    return false;
+}
+
 void Menu::drawImageOnMenu(Mat& menu, const Mat& image, Point position, Size targetSize) {
     if (image.empty()) return;
     
     Mat imgToRender = image.clone();
     
-    // Redimensiona se um tamanho específico foi solicitado
     if (targetSize.width > 0 && targetSize.height > 0) {
         resize(imgToRender, imgToRender, targetSize);
     }
     
-    // Verifica se a imagem cabe na tela
     if (position.x + imgToRender.cols > menu.cols || 
         position.y + imgToRender.rows > menu.rows ||
         position.x < 0 || position.y < 0) {
         return;
     }
     
-    // Se a imagem tem canal alfa (transparência)
     if (imgToRender.channels() == 4) {
         Mat mask;
-        std::vector<Mat> layers;
+        vector<Mat> layers;
         
         split(imgToRender, layers);
         Mat rgb[3] = { layers[0], layers[1], layers[2] };
         mask = layers[3];
         merge(rgb, 3, imgToRender);
         
-        imgToRender.copyTo(menu.rowRange(position.y, position.y + imgToRender.rows)
-                              .colRange(position.x, position.x + imgToRender.cols), mask);
+        imgToRender.copyTo(menu(Rect(position.x, position.y, imgToRender.cols, imgToRender.rows)), mask);
     } else {
-        // Imagem sem transparência
-        imgToRender.copyTo(menu.rowRange(position.y, position.y + imgToRender.rows)
-                              .colRange(position.x, position.x + imgToRender.cols));
+        imgToRender.copyTo(menu(Rect(position.x, position.y, imgToRender.cols, imgToRender.rows)));
+    }
+}
+//=====================================================================================================================
+void Menu::drawMenu(Mat &desc, const std::vector<MenuItem>& items) {
+    for (const auto& item : items) {
+        // Desenha o quadrado
+        rectangle(desc, item.box, Scalar(250, 255, 120), 2);
+
+        // Se existir imagem associada
+        auto it = menuImages.find(item.imageKey);
+        if (it != menuImages.end()) {
+            Point iconPos(item.box.x + 10, item.box.y + 10);
+            Size iconSize(item.box.width - 20, item.box.height - 20);
+
+            drawImageOnMenu(desc, it->second, iconPos, iconSize);
+        }
     }
 }
 
-// Método para desenhar o menu principal
+//=====================================================================================================================
 void Menu::drawMainMenu(Mat& menu) {
-    // Desenha imagem de fundo se existir
     if (menuImages.find("main_bg") != menuImages.end()) {
         Mat background = menuImages["main_bg"];
         resize(background, background, Size(camWidth, camHeight));
         background.copyTo(menu);
     }
     
-    // Desenha logo no topo se existir
     if (menuImages.find("logo") != menuImages.end()) {
         Mat logo = menuImages["logo"];
-        Point logoPos(camWidth/2 - 150, 50); // Centraliza horizontalmente
+        Point logoPos(camWidth/2 - 150, 50);
         drawImageOnMenu(menu, logo, logoPos, Size(300, 100));
-    } else {
-        // Título texto se não houver logo
+    } /*else {
         putText(menu, "Sobrevivendo Ao Fim Do Periodo",
                 Point(camWidth * 0.25 - 35, camHeight * 0.25),
                 FONT_HERSHEY_TRIPLEX, 2.0,
                 Scalar(255, 255, 255), 3);
-    }
+    }*/
 
-    // Botão Jogar
-    botaoJogar = Rect(camWidth * 0.5 - 120, camHeight * 0.5 - 50, 240, 60);
-    rectangle(menu, botaoJogar, Scalar(255, 255, 255), 2);
-    
-    // Ícone do Play se existir
-    if(play && menuImages.find("play_icon") != menuImages.end()){    
-        Point iconPos(botaoJogar.x + 10, botaoJogar.y + 10);
-        drawImageOnMenu(menu, menuImages["play_icon"], iconPos, Size(40, 40));
-        putText(menu, "Play",
-                Point(botaoJogar.x + 85, botaoJogar.y + 40),
-                FONT_HERSHEY_TRIPLEX, 1.0,
-                Scalar(255, 255, 255), 2);
-        } else {
-        putText(menu, "Play",
-                Point(botaoJogar.x + 85, botaoJogar.y + 40),
-                FONT_HERSHEY_TRIPLEX, 1.0,
-                Scalar(255, 255, 255), 2);
-    }
+    botaoJogar = animBotaoJogar.rect;
+    botaoOpcoes = animBotaoOpcoes.rect;
+    botaoDesc = animBotaoDesc.rect;
+    botaoSair = animBotaoSair.rect;
 
-    // Botão Opções
-    botaoOpcoes = Rect(camWidth * 0.5 - 120, camHeight * 0.5 + 50, 240, 60);
-    rectangle(menu, botaoOpcoes, Scalar(255, 255, 255), 2);
+    Mat jogarSprite = animBotaoJogar.getCurrentSprite();
+    jogarSprite.copyTo(menu(botaoJogar));
     
-    if(opcoes && menuImages.find("options_icon") != menuImages.end()){
-        Point iconPos(botaoOpcoes.x + 10, botaoOpcoes.y + 10);
-        drawImageOnMenu(menu, menuImages["options_icon"], iconPos, Size(40, 40));
-        putText(menu, "Options",
-                Point(botaoOpcoes.x + 60, botaoOpcoes.y + 40),
-                FONT_HERSHEY_TRIPLEX, 1.0,
-                Scalar(255, 255, 255), 2);
-    } else {
-        putText(menu, "Options",
-                Point(botaoOpcoes.x + 60, botaoOpcoes.y + 40),
-                FONT_HERSHEY_TRIPLEX, 1.0,
-                Scalar(255, 255, 255), 2);
-    }
+    Mat opcoesSprite = animBotaoOpcoes.getCurrentSprite();
+    opcoesSprite.copyTo(menu(botaoOpcoes));
+    
+    Mat descSprite = animBotaoDesc.getCurrentSprite();
+    descSprite.copyTo(menu(botaoDesc));
+    
+    Mat sairSprite = animBotaoSair.getCurrentSprite();
+    sairSprite.copyTo(menu(botaoSair));
 
-    // Botão Description
-    botaoDesc = Rect(camWidth * 0.5 - 120, camHeight * 0.5 + 150, 240, 60);
-    rectangle(menu, botaoDesc, Scalar(255, 255, 255), 2);
-    
-    if(description && menuImages.find("desc_icon") != menuImages.end()){
-        Point iconPos(botaoDesc.x + 10, botaoDesc.y + 10);
-        drawImageOnMenu(menu, menuImages["desc_icon"], iconPos, Size(40, 40));
-        putText(menu, "Description",
-                Point(botaoDesc.x + 20, botaoDesc.y + 40),
-                FONT_HERSHEY_TRIPLEX, 1.0,
-                Scalar(255, 255, 255), 2);
-    } else {
-        putText(menu, "Description",
-                Point(botaoDesc.x + 20, botaoDesc.y + 40),
-                FONT_HERSHEY_TRIPLEX, 1.0,
-                Scalar(255, 255, 255), 2);
-    }
+    putText(menu, "Play", Point(botaoJogar.x + 85, botaoJogar.y + 40),
+            FONT_HERSHEY_TRIPLEX, 1.0, Scalar(250, 255, 120), 2);
 
-    // Botão Sair
-    botaoSair = Rect(camWidth * 0.5 - 120, camHeight * 0.5 + 250, 240, 60);
-    rectangle(menu, botaoSair, Scalar(255, 255, 255), 2);
-    
-    if(sair && menuImages.find("exit_icon") != menuImages.end()){
-        Point iconPos(botaoSair.x + 10, botaoSair.y + 10);
-        drawImageOnMenu(menu, menuImages["exit_icon"], iconPos, Size(40, 40));
-        putText(menu, "Exit",
-                Point(botaoSair.x + 75, botaoSair.y + 40),
-                FONT_HERSHEY_TRIPLEX, 1.0,
-                Scalar(255, 255, 255), 2);
-    } else {
-        putText(menu, "Exit",
-                Point(botaoSair.x + 75, botaoSair.y + 40),
-                FONT_HERSHEY_TRIPLEX, 1.0,
-                Scalar(255, 255, 255), 2);
-    }
+    putText(menu, "Options", Point(botaoOpcoes.x + 60, botaoOpcoes.y + 40),
+            FONT_HERSHEY_TRIPLEX, 1.0, Scalar(250, 255, 120), 2);
+
+    putText(menu, "Description", Point(botaoDesc.x + 20, botaoDesc.y + 40),
+            FONT_HERSHEY_TRIPLEX, 1.0, Scalar(250, 255, 120), 2);
+
+    putText(menu, "Exit", Point(botaoSair.x + 85, botaoSair.y + 40),
+            FONT_HERSHEY_TRIPLEX, 1.0, Scalar(250, 255, 120), 2);
 }
-
-// Método para desenhar o menu de opções
+//=====================================================================================================================
 void Menu::drawOptionsMenu(Mat& options) {
-    // Fundo específico para opções se existir
     if (menuImages.find("options_bg") != menuImages.end()) {
         Mat background = menuImages["options_bg"];
         resize(background, background, Size(camWidth, camHeight));
         background.copyTo(options);
     }
     
-    putText(options, "Options",
-            Point(camWidth * 0.25 + 200, camHeight * 0.25),
-            FONT_HERSHEY_TRIPLEX, 2.0,
-            Scalar(255, 255, 255), 3);
-
-    botaoLeave = Rect(camWidth * 0.5 - 90, camHeight * 0.5 + 250, 240, 60);
-    rectangle(options, botaoLeave, Scalar(255, 255, 255), 2);
-    putText(options, "Leave",
-            Point(botaoLeave.x + 70, botaoLeave.y + 40),
-            FONT_HERSHEY_TRIPLEX, 1.0,
-            Scalar(255, 255, 255), 3);
-}
-
-// Método para desenhar o menu de descrição
-void Menu::drawDescriptionMenu(Mat& desc) {
-    if (menuImages.find("description_icon") != menuImages.end()) {
-        Point iconPos(camWidth * 0.25 + 200, camHeight * 0.1);
-        drawImageOnMenu(desc, menuImages["description_icon"], iconPos, Size(500, 200));
-    }else{
-    putText(desc, "Description",
-            Point(camWidth * 0.25 + 200, camHeight * 0.25),
-            FONT_HERSHEY_TRIPLEX, 1.0,
-            Scalar(255, 255, 255), 3);
-
+        volumep = Rect(450, 550, 50, 50);
+        volumem = Rect(200, 550, 50, 50);
+        
+    if (menuImages.find("volumePlus") != menuImages.end()) {
+        Mat volumePlus = menuImages["volumePlus"];
+        Point volumePlusPos(450, 500);
+        drawImageOnMenu(options, volumePlus, volumePlusPos, Size(300, 100));
+    } else {
+        putText(options, "+",
+                Point(450, 600),
+                FONT_HERSHEY_TRIPLEX, 2.0,
+                Scalar(250, 255, 120), 3);
     }
-    if (q == true){
-        putText(desc, "Desc1",
-            Point(camWidth * 0.68 - 1, camHeight * 0.25),
+    if (menuImages.find("volumeMinus") != menuImages.end()) {
+        Mat volumeMinus = menuImages["volumeMinus"];
+        Point volumeMinusPos(200, 600);
+        drawImageOnMenu(options, volumeMinus, volumeMinusPos, Size(300, 100));
+    } else {
+        putText(options, "-",
+                Point(200, 600),
+                FONT_HERSHEY_TRIPLEX, 2.0,
+                Scalar(250, 255, 120), 3);
+    }
+    vector<Rect> quadrados = {
+        Rect(255, 560, 10, 40),
+        Rect(275, 560, 10, 40),
+        Rect(295, 560, 10, 40),
+        Rect(315, 560, 10, 40),
+        Rect(335, 560, 10, 40),
+        Rect(355, 560, 10, 40),
+        Rect(375, 560, 10, 40),
+        Rect(395, 560, 10, 40),
+        Rect(415, 560, 10, 40),
+        Rect(435, 560, 10, 40)
+    };
+
+    for (int i = 0; i < 10; i++) {
+        rectangle(options, quadrados[i], Scalar(100, 100, 100), FILLED);
+    }
+
+    for (int i = 0; i < v; i++) {
+        rectangle(options, quadrados[i], Scalar(250, 255, 120), FILLED);
+    }
+
+    rectangle(options, Rect(750, 550, 75, 75), Scalar(250, 255, 120), 2);
+    rectangle(options, Rect(750, 650, 75, 75), Scalar(250, 255, 120), 2);
+    rectangle(options, Rect(1200, 550, 75, 75), Scalar(250, 255, 120), 2);
+    rectangle(options, Rect(1200, 650, 75, 75), Scalar(250, 255, 120), 2);
+
+    putText(options, "M", Point(760, 610),
+            FONT_HERSHEY_TRIPLEX, 2.0,
+            Scalar(255, 255, 255), 2);
+
+    putText(options, "Voltar ao menu", Point(845, 600),
+            FONT_HERSHEY_TRIPLEX, 0.8,
+            Scalar(250, 255, 120), 2);
+
+    putText(options, "Esc", Point(760, 700),
             FONT_HERSHEY_TRIPLEX, 1.0,
             Scalar(255, 255, 255), 2);
-    }
-    if(q1 == true){
-        putText(desc, "Desc2",
-            Point(camWidth * 0.68 - 1, camHeight * 0.25),
-            FONT_HERSHEY_TRIPLEX, 1.0,
-            Scalar(255, 0, 0), 2);
-    }
+    
+    putText(options, "Sair do jogo", Point(845, 690),
+            FONT_HERSHEY_TRIPLEX, 0.8,
+            Scalar(250, 255, 120), 2);
 
-    linhaVertical = Rect(camWidth * 0.65 - 1, camHeight * 0.2, 2, camHeight * 0.5);
-    rectangle(desc, linhaVertical, Scalar(255, 255, 255), FILLED);
+    putText(options, "J", Point(1220, 610),
+            FONT_HERSHEY_TRIPLEX, 2.0,
+            Scalar(255, 255, 255), 2);
+    
+    putText(options, "Aumentar volume", Point(1295, 600),
+            FONT_HERSHEY_TRIPLEX, 0.8,
+            Scalar(250, 255, 120), 2);
 
-    quadrado = Rect(300, 350, 100, 100);
-    rectangle(desc, quadrado, Scalar(255, 255, 255), 2);
+    putText(options, "K", Point(1215, 705),
+            FONT_HERSHEY_TRIPLEX, 2.0,
+            Scalar(255, 255, 255), 2);
 
-    if(menuImages.find("quadrado") != menuImages.end()){    
-        Point iconPos(quadrado.x + 10, quadrado.y + 10);
-        drawImageOnMenu(desc, menuImages["quadrado"], iconPos, Size(80, 80));
-    }
+    putText(options, "Diminuir volume", Point(1295, 690),
+            FONT_HERSHEY_TRIPLEX, 0.8,
+            Scalar(250, 255, 120), 2);
 
-    quadrado1 = Rect(300, 500, 100, 100);
-    rectangle(desc, quadrado1, Scalar(255, 255, 255), 2);
+    animBotaoLeave.rect = Rect(camWidth * 0.5 - 90, camHeight * 0.5 + 250, 240, 60);
+    botaoLeave = animBotaoLeave.rect;
 
-    if(menuImages.find("quadrado1") != menuImages.end()){    
-        Point iconPos(quadrado1.x + 10, quadrado1.y + 10);
-        drawImageOnMenu(desc, menuImages["quadrado1"], iconPos, Size(80, 80));
-    }
+    Mat leaveSprite = animBotaoLeave.getCurrentSprite();
+    leaveSprite.copyTo(options(botaoLeave));
 
-    quadrado2 = Rect(300, 650, 100, 100);
-    rectangle(desc, quadrado2, Scalar(255, 255, 255), 2);
-
-    if(menuImages.find("quadrado2") != menuImages.end()){    
-        Point iconPos(quadrado2.x + 10, quadrado2.y + 10);
-        drawImageOnMenu(desc, menuImages["quadrado2"], iconPos, Size(80, 80));
-    }
-
-    quadrado3 = Rect(450, 350, 100, 100);
-    rectangle(desc, quadrado3, Scalar(255, 255, 255), 2);
-
-    if(menuImages.find("quadrado3") != menuImages.end()){    
-        Point iconPos(quadrado3.x + 10, quadrado3.y + 10);
-        drawImageOnMenu(desc, menuImages["quadrado3"], iconPos, Size(80, 80));
-    }
-
-    quadrado4 = Rect(450, 500, 100, 100);
-    rectangle(desc, quadrado4, Scalar(255, 255, 255), 2);
-
-    if(menuImages.find("quadrado4") != menuImages.end()){    
-        Point iconPos(quadrado4.x + 10, quadrado4.y + 10);
-        drawImageOnMenu(desc, menuImages["quadrado4"], iconPos, Size(80, 80));
-    }
-
-    quadrado5 = Rect(450, 650, 100, 100);
-    rectangle(desc, quadrado5, Scalar(255, 255, 255), 2);
-
-    if(menuImages.find("quadrado5") != menuImages.end()){    
-        Point iconPos(quadrado5.x + 10, quadrado5.y + 10);
-        drawImageOnMenu(desc, menuImages["quadrado5"], iconPos, Size(80, 80));
-    }
-
-    quadrado6 = Rect(600, 350, 100, 100);
-    rectangle(desc, quadrado6, Scalar(255, 255, 255), 2);
-
-    if(menuImages.find("quadrado6") != menuImages.end()){    
-        Point iconPos(quadrado6.x + 10, quadrado6.y + 10);
-        drawImageOnMenu(desc, menuImages["quadrado6"], iconPos, Size(80, 80));
-    }
-
-    quadrado7 = Rect(600, 500, 100, 100);
-    rectangle(desc, quadrado7, Scalar(255, 255, 255), 2);
-
-    if(menuImages.find("quadrado7") != menuImages.end()){    
-        Point iconPos(quadrado7.x + 10, quadrado7.y + 10);
-        drawImageOnMenu(desc, menuImages["quadrado7"], iconPos, Size(80, 80));
-    }
-
-    quadrado8 = Rect(600, 650, 100, 100);
-    rectangle(desc, quadrado8, Scalar(255, 255, 255), 2);
-
-    if(menuImages.find("quadrado8") != menuImages.end()){    
-        Point iconPos(quadrado8.x + 10, quadrado8.y + 10);
-        drawImageOnMenu(desc, menuImages["quadrado8"], iconPos, Size(80, 80));
-    }
-
-    botaoLeave = Rect(camWidth * 0.5 - 90, camHeight * 0.5 + 250, 240, 60);
-    rectangle(desc, botaoLeave, Scalar(255, 255, 255), 2);
-    putText(desc, "Leave",
-            Point(botaoLeave.x + 70, botaoLeave.y + 40),
-            FONT_HERSHEY_TRIPLEX, 1.0,
-            Scalar(255, 255, 255), 3);
+    putText(options, "Volume", Point(290, 530),
+            FONT_HERSHEY_TRIPLEX, 1.0, Scalar(250, 255, 120), 2);
+    
+    putText(options, "Leave", Point(botaoLeave.x + 70, botaoLeave.y + 40),
+            FONT_HERSHEY_TRIPLEX, 1.0, Scalar(250, 255, 120), 3);
+    
 }
+//=====================================================================================================================
+void Menu::drawDescriptionMenu(Mat& desc) {
+    
+    if (menuImages.find("mopa.png") != menuImages.end()) {
+        Mat background = menuImages["options_bg"];
+        resize(background, background, Size(camWidth, camHeight));
+        background.copyTo(desc);
+    }
 
-// Método para mostrar o menu principal
+    // Linha divisória
+    linhaVertical = Rect(camWidth * 0.65 - 1, camHeight * 0.2, 2, camHeight * 0.5);
+    rectangle(desc, linhaVertical, Scalar(250, 255, 120), FILLED);
+
+    // Desenhar apenas os itens desbloqueados
+    vector<MenuItem> itemsParaDesenhar;
+    for (const auto& item : itensDescricao) {
+        if (item.desbloqueado) {
+            itemsParaDesenhar.push_back({item.posicao, item.key});
+        }
+    }
+
+    drawMenu(desc, itemsParaDesenhar);
+
+    Point descPos(camWidth * 0.68, camHeight * 0.25);
+    
+    if (qselected > 0) {
+    // Encontrar o item selecionado baseado na posição na lista de desbloqueados
+    int contador = 1;
+    bool itemEncontrado = false;
+    
+    for (const auto& item : itensDescricao) {
+        if (item.desbloqueado) {
+            if (contador == qselected) {
+                putText(desc, item.nome, 
+                        Point(descPos.x, descPos.y), 
+                        FONT_HERSHEY_TRIPLEX, 0.8, Scalar(255, 255, 255), 2);
+                
+                string descricao = item.descricao;
+                putText(desc, descricao, 
+                        Point(descPos.x, descPos.y + 40), 
+                        FONT_HERSHEY_SIMPLEX, 0.6, Scalar(200, 200, 200), 1);
+                itemEncontrado = true;
+                break;
+            }
+            contador++;
+        }
+    }
+    
+    // Se não encontrou o item selecionado, resetar qselected
+    if (!itemEncontrado) {
+        qselected = 0;
+    }
+    }   else {
+        if (itemsParaDesenhar.empty()) {
+            putText(desc, "Nenhum item desbloqueado ainda", 
+                    descPos, FONT_HERSHEY_TRIPLEX, 0.7, Scalar(150, 150, 150), 2);
+            putText(desc, "Explore o jogo para encontrar itens!", 
+                    Point(descPos.x, descPos.y + 40), FONT_HERSHEY_SIMPLEX, 0.6, Scalar(150, 150, 150), 1);
+        } else {
+            putText(desc, "Clique em um item para ver sua descricao", 
+                    descPos, FONT_HERSHEY_TRIPLEX, 0.7, Scalar(255, 255, 255), 2);
+        }
+    }
+
+    // Botão leave
+    animBotaoLeave.rect = Rect(camWidth * 0.5 - 90, camHeight * 0.5 + 250, 240, 60);
+    botaoLeave = animBotaoLeave.rect;
+
+    Mat leaveSprite = animBotaoLeave.getCurrentSprite();
+    leaveSprite.copyTo(desc(botaoLeave));
+
+    putText(desc, "Leave", Point(botaoLeave.x + 70, botaoLeave.y + 40),
+            FONT_HERSHEY_TRIPLEX, 1.0, Scalar(250, 255, 120), 3);
+}
+//=====================================================================================================================
 void Menu::showMainMenu() {
     Mat menu(camHeight, camWidth, CV_8UC3, Scalar(0, 0, 0));
     drawMainMenu(menu);
     imshow(windowName, menu);
 }
 
-// Método para mostrar o menu de opções
 void Menu::showOptionsMenu() {
     Mat options(camHeight, camWidth, CV_8UC3, Scalar(0, 0, 0));
     drawOptionsMenu(options);
     imshow(windowName, options);
 }
 
-// Método para mostrar o menu de descrição
 void Menu::showDescriptionMenu() {
     Mat desc(camHeight, camWidth, CV_8UC3, Scalar(0, 0, 0));
     drawDescriptionMenu(desc);
     imshow(windowName, desc);
 }
 
-// Callback estático do mouse
 void Menu::mouseCallbackStatic(int event, int x, int y, int flags, void* userdata) {
     Menu* menu = static_cast<Menu*>(userdata);
     if (menu) {
@@ -382,169 +473,96 @@ void Menu::mouseCallbackStatic(int event, int x, int y, int flags, void* userdat
     }
 }
 
-// Callback do mouse da instância
 void Menu::mouseCallback(int event, int x, int y, int flags) {
+    bool previousJogarHovered = animBotaoJogar.isHovered;
+    bool previousOpcoesHovered = animBotaoOpcoes.isHovered;
+    bool previousDescHovered = animBotaoDesc.isHovered;
+    bool previousSairHovered = animBotaoSair.isHovered;
+    bool previousLeaveHovered = animBotaoLeave.isHovered;
+    
+    animBotaoJogar.isHovered = botaoJogar.contains(Point(x, y));
+    animBotaoOpcoes.isHovered = botaoOpcoes.contains(Point(x, y));
+    animBotaoDesc.isHovered = botaoDesc.contains(Point(x, y));
+    animBotaoSair.isHovered = botaoSair.contains(Point(x, y));
+    animBotaoLeave.isHovered = botaoLeave.contains(Point(x, y));
+
+    if (!previousJogarHovered && animBotaoJogar.isHovered && estado == MENU) {
+        playHoverSound();
+    }
+    if (!previousOpcoesHovered && animBotaoOpcoes.isHovered && estado == MENU) {
+        playHoverSound();
+    }
+    if (!previousDescHovered && animBotaoDesc.isHovered && estado == MENU) {
+        playHoverSound();
+    }
+    if (!previousSairHovered && animBotaoSair.isHovered && estado == MENU) {
+        playHoverSound();
+    }
+    if (!previousLeaveHovered && animBotaoLeave.isHovered && (estado == OPTIONS || estado == DESC)) {
+        playHoverSound();
+    }
+
     if (estado == MENU && event == EVENT_LBUTTONDOWN) {
         if (botaoJogar.contains(Point(x, y))) {
-            std::cout << "Jogar clicado!" << std::endl;
+            playClickSound();
+            cout << "Jogar clicado!" << endl;
             estado = JOGO;
         }
         if (botaoSair.contains(Point(x, y))) {
-            std::cout << "Sair clicado!" << std::endl;
+            playClickSound();
+            cout << "Sair clicado!" << endl;
             estado = SAIR;
         }
         if (botaoOpcoes.contains(Point(x, y))) {
-            std::cout << "Options clicado!" << std::endl;
+            playClickSound();
+            cout << "Options clicado!" << endl;
             estado = OPTIONS;
         }
         if (botaoDesc.contains(Point(x, y))) {
-            std::cout << "Description clicado!" << std::endl;
+            playClickSound();
+            cout << "Description clicado!" << endl;
             estado = DESC;
         }
     }
+    
     if (estado == OPTIONS && event == EVENT_LBUTTONDOWN) {
         if (botaoLeave.contains(Point(x, y))) {
-            std::cout << "Leave options clicado!" << std::endl;
+            playClickSound();
             estado = MENU;
         }
+        if (volumep.contains(Point(x, y))) {
+            playClickSound();
+            audio.setSoundVolume(min(audio.getSoundVolume() + 10, 100));
+            v++;
+            if(v > 10) v = 10;
+        }
+        if(volumem.contains(Point(x, y))){
+            playClickSound();
+            audio.setSoundVolume(max(audio.getSoundVolume() - 10, 0));
+            v--;
+            if(v < 0) v = 0;
+        }
     }
+    
     if (estado == DESC && event == EVENT_LBUTTONDOWN) {
         if (botaoLeave.contains(Point(x, y))) {
-            std::cout << "Leave desc clicado!" << std::endl;
-            q = false;
-            q1 = false;
-            q2 = false;
-            q3 = false;
-            q4 = false;
-            q5 = false;
-            q6 = false;
-            q7 = false;
-            q8 = false;
+            playClickSound();
+            qselected = 0;
             estado = MENU;
         }
-        if(quadrado.contains(Point(x,y))){
-            q = true;
-            q1 = false;
-            q2 = false;
-            q3 = false;
-            q4 = false;
-            q5 = false;
-            q6 = false;
-            q7 = false;
-            q8 = false;
+        int contador = 1;
+        for (const auto& item : itensDescricao) {
+            if (item.desbloqueado && item.posicao.contains(Point(x, y))) {
+                playClickSound();
+                qselected = contador;
+                break;
+            }
+            if (item.desbloqueado) {
+                contador++;
+            }
         }
-        if(quadrado1.contains(Point(x,y))){
-            q = false;
-            q1 = true;
-            q2 = false;
-            q3 = false;
-            q4 = false;
-            q5 = false;
-            q6 = false;
-            q7 = false;
-            q8 = false;
-        }
-        if(quadrado2.contains(Point(x,y))){
-            q = false;
-            q1 = false;
-            q2 = true;
-            q3 = false;
-            q4 = false;
-            q5 = false;
-            q6 = false;
-            q7 = false;
-            q8 = false;
-        }
-        if(quadrado3.contains(Point(x,y))){
-            q = false;
-            q1 = false;
-            q2 = false;
-            q3 = true;
-            q4 = false;
-            q5 = false;
-            q6 = false;
-            q7 = false;
-            q8 = false;
-        }
-        if(quadrado4.contains(Point(x,y))){
-            q = false;
-            q1 = false;
-            q2 = false;
-            q3 = false;
-            q4 = true;
-            q5 = false;
-            q6 = false;
-            q7 = false;
-            q8 = false;
-        }
-        if(quadrado5.contains(Point(x,y))){
-            q = false;
-            q1 = false;
-            q2 = false;
-            q3 = false;
-            q4 = false;
-            q5 = true;
-            q6 = false;
-            q7 = false;
-            q8 = false;
-        }
-        if(quadrado6.contains(Point(x,y))){
-            q = false;
-            q1 = false;
-            q2 = false;
-            q3 = false;
-            q4 = false;
-            q5 = false;
-            q6 = true;
-            q7 = false;
-            q8 = false;
-        }
-        if(quadrado7.contains(Point(x,y))){
-            q = false;
-            q1 = false;
-            q2 = false;
-            q3 = false;
-            q4 = false;
-            q5 = false;
-            q6 = false;
-            q7 = true;
-            q8 = false;
-        }
-        if(quadrado8.contains(Point(x,y))){
-            q = false;
-            q1 = false;
-            q2 = false;
-            q3 = false;
-            q4 = false;
-            q5 = false;
-            q6 = false;
-            q7 = false;
-            q8 = true;
-        }
-    }
-    if (botaoJogar.contains(Point(x,y))){
-        play = true;
-    }else{
-        play = false;
-    }
-    if(botaoOpcoes.contains(Point(x, y))){
-        opcoes = true;
-    }else{
-        opcoes = false;
-    }
-    if(botaoDesc.contains(Point(x, y))){
-        description = true;
-    }else{
-        description = false;
-    }
-    if(botaoSair.contains(Point(x, y))){
-        sair = true;
-    }else{
-        sair = false;
     }
 }
-
-// Método para configurar o callback do mouse
 void Menu::setupMouseCallback() {
     setMouseCallback(windowName, mouseCallbackStatic, this);
 }
