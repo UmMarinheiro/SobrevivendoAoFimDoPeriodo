@@ -1,6 +1,7 @@
 #pragma once
 #define MIN_PIXEL_FOR_COLISION 10
 
+#define PREPARE_DURATION_MS 3000
 #define TURN_DURATION_MS 10000
 
 // Player
