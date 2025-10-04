@@ -31,7 +31,7 @@ public:
     cv::Mat getFrame();
     std::vector<cv::Rect> getFaces(cv::Mat frame);
     
-    void startTurn(int number);
+    void startTurn(int number, int item);
     void updateTurn();
     void endTurn();
 

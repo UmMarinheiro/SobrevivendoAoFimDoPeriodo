@@ -143,7 +143,7 @@ int main()
             }
             else if (turno == ITEM) {
                 detectAndDraw(frame, cascade, scale, tryflip);
-                game->startTurn(obterProximoNumeroJogador()-1);
+                game->startTurn(obterProximoNumeroJogador()-1, 1 /*INSERIR ITEM SORTEADO AQUI*/);
                 turno = POSITION; 
             }
             else if (turno == POSITION) {
