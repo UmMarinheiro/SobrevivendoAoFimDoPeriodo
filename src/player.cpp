@@ -4,6 +4,7 @@
 #include <string>
 #include <utility>
 #include "playerPen.hpp"
+#include "playerBag.hpp"
 
 std::pair<float, float> getRectCenter(cv::Rect r) {return {r.x + r.width/2, r.y + r.height/2};}
 
@@ -17,6 +18,7 @@ Player::Player(std::string asset)
 std::shared_ptr<Player> Player::createPlayer(std::string asset, std::string item_name)
 {
     if(item_name == PLAYERPEN_NAME) return std::make_shared<PlayerPen>(asset);
+    else if(item_name == PLAYERBAG_NAME) return std::make_shared<PlayerBag>(asset);
     else return std::make_shared<Player>(asset);
 }
 
