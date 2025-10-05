@@ -5,7 +5,7 @@
 
 PlayerBag::PlayerBag(std::string asset) : Player(asset){}
 
-void PlayerBag::tryMakeSplash(float t, bool coliding)
+void PlayerBag::tryMakeDrop(float t, bool coliding)
 {
     if(t > nextSplash)
     {
@@ -27,13 +27,13 @@ void PlayerBag::startPast()
 void PlayerBag::updateRec(const std::pair<float, float>* pos, float t)
 {
     Player::updateRec(pos, t);
-    tryMakeSplash(t, false);
+    tryMakeDrop(t, false);
     for(auto& splash_sptr : drops) splash_sptr -> update();
 }
 void PlayerBag::updatePast(float t)
 {
     Player::updatePast(t);
-    tryMakeSplash(t, true);
+    tryMakeDrop(t, true);
     for(auto& splash_sptr : drops) splash_sptr -> update();
 }
 void PlayerBag::endRec()

@@ -1,5 +1,7 @@
 #pragma once
-#define MIN_PIXEL_FOR_COLISION 10
+#define MIN_PIXEL_FOR_COLISION 1
+
+#define DRAWHIBOXES
 
 #define PREPARE_DURATION_MS 3000
 #define TURN_DURATION_MS 10000
@@ -27,3 +29,12 @@
 #define PLAYERBAG_DROP_HITBOX_SIZE {25, 25}
 #define PLAYERBAG_DROP_IMAGE "assets/images/orange.png"
 #define PLAYERBAG_DROP_VELOCITY 50
+
+// Marmita Cobiçada
+#define PLAYERDOG_NAME "Marmita"
+#define PLAYERDOG_GROWTH_MS 1000
+#define PLAYERDOG_START_SIZE {10, 10}
+#define PLAYERDOG_IMAGE_SIZE {35, 35}
+#define PLAYERDOG_HITBOX_SIZE {25, 25}
+#define PLAYERDOG_IMAGE "assets/images/orange.png"
+#define PLAYERDOG_VELOCITY 25

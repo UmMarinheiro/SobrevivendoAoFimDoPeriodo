@@ -17,8 +17,9 @@ typedef struct TimeStamp
 
 class Player : public Transform
 {
-private:
+protected:
     std::vector<TimeStamp> record = {(TimeStamp){{0,0}, 0}};
+private:
 
     std::shared_ptr<Sprite> sprite_sptr;
     std::shared_ptr<Colisor> colisor_sptr;

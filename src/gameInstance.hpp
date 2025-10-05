@@ -27,6 +27,8 @@ private:
     void updatePositioning();
     void startRunning();
     void updateRunning();
+
+    void drawHiboxes(cv::Mat frame);
 public:
     GameInstance(std::string& wName, double& scale, bool& tryflip,
         cv::CascadeClassifier& cascade, cv::VideoCapture& capture);

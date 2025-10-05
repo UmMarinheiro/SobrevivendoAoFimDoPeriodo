@@ -1,4 +1,5 @@
 #include "gameInstance.hpp"
+#include "colisorMan.hpp"
 #include "opencvUtils.hpp"
 #include "player.hpp"
 #include "spriteMan.hpp"
@@ -20,6 +21,15 @@ cv::Mat GameInstance::getFrame()
 std::vector<cv::Rect> GameInstance::getFaces(cv::Mat frame)
 {
     return ::getFaces(frame, cascade);
+}
+void GameInstance::drawHiboxes(cv::Mat frame)
+{
+    for (cv::Rect r : ColisorMan::getRects())
+    {
+        rectangle(frame, cv::Point(cvRound(r.x), cvRound(r.y)),
+                    cv::Point(cvRound((r.x + r.width-1)), cvRound((r.y + r.height-1))),
+                    cv::Scalar(255,0,0), 1);
+    }
 }
 
 void GameInstance::startTurn(int number, std::string item)
@@ -79,6 +89,10 @@ void GameInstance::updatePositioning()
     SpriteMan::windowFrame = frame;
     SpriteMan::tick();
 
+    #ifdef DRAWHIBOXES
+    drawHiboxes(frame); 
+    #endif
+
     cv::imshow(wName, frame);
 
     if(elapsedTime > PREPARE_DURATION_MS) state = START_RUNNING;
@@ -108,12 +122,15 @@ void GameInstance::updateRunning()
     SpriteMan::windowFrame = frame;
     SpriteMan::tick();
 
+    #ifdef DRAWHIBOXES
+    drawHiboxes(frame); 
+    #endif
+
     cv::imshow(wName, frame);
 
     if(!current->isAlive()) state = GAME_ENDED;
     else if(elapsedTime > TURN_DURATION_MS)state = TURN_ENDED;
 }
-
 
 int GameInstance::getTimeFromStart()
 {

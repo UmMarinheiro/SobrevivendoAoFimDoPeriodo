@@ -230,6 +230,10 @@ void handleGameState(shared_ptr<GameInstance> game, CascadeClassifier& cascade, 
                 game->endTurn();
                 turno = PHOTO;
             }
+            else if(game->hasGameEnded())
+            {
+                estado = SAIR_JOGO; 
+            }
             break;
     }
 
