@@ -3,3 +3,4 @@ facedetect_extra
 facedetect_simple
 build
 assets/players/*
+.vscode
