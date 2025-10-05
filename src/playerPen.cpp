@@ -10,18 +10,18 @@ void PlayerPen::tryMakeSplash(float t, bool coliding)
     if(t > nextSplash)
     {
         splashes.push_back(InkSplash::createInkSplash(getGlobalPos(), coliding));
-        nextSplash += SPLASH_INTERVAL_MS;
+        nextSplash += PLAYERPEN_SPLASH_INTERVAL_MS;
     }
 }
 
 void PlayerPen::startRec() 
 {
-    nextSplash = SPLASH_INTERVAL_MS;
+    nextSplash = PLAYERPEN_SPLASH_INTERVAL_MS;
     Player::startRec();
 }
 void PlayerPen::startPast() 
 {
-    nextSplash = SPLASH_INTERVAL_MS;
+    nextSplash = PLAYERPEN_SPLASH_INTERVAL_MS;
     Player::startPast();
 }
 void PlayerPen::updateRec(const std::pair<float, float>* pos, float t)

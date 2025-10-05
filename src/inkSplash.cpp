@@ -7,8 +7,8 @@
 InkSplash::InkSplash(std::pair<float, float> pos, bool coliding) : coliding(coliding)
 {    
     setGlobalPos(pos);
-    sprite_sptr = Sprite::createSprite(SPLASH_IMAGE, (Transform*)this);
-    sprite_sptr->setLocalSize(SPLASH_START_SIZE);
+    sprite_sptr = Sprite::createSprite(PLAYERPEN_SPLASH_IMAGE, (Transform*)this);
+    sprite_sptr->setLocalSize(PLAYERPEN_SPLASH_START_SIZE);
     fullyGrown = false;
     
     spawnTime = std::chrono::steady_clock::now();
@@ -25,19 +25,19 @@ void InkSplash::update()
 {
     if(fullyGrown) return;
 
-    float growthPercentage = (float)getTimeFromStart()/SPLASH_GROWTH_MS;
+    float growthPercentage = (float)getTimeFromStart()/PLAYERPEN_SPLASH_GROWTH_MS;
     std::cout<<growthPercentage<<std::endl;
     sprite_sptr->setLocalSize({
-        (int[2])SPLASH_START_SIZE[0]+((int[2])SPLASH_IMAGE_SIZE[0] - (int[2])SPLASH_START_SIZE[0])*growthPercentage,
-        (int[2])SPLASH_START_SIZE[1]+((int[2])SPLASH_IMAGE_SIZE[1] - (int[2])SPLASH_START_SIZE[1])*growthPercentage
+        (int[2])PLAYERPEN_SPLASH_START_SIZE[0]+((int[2])PLAYERPEN_SPLASH_IMAGE_SIZE[0] - (int[2])PLAYERPEN_SPLASH_START_SIZE[0])*growthPercentage,
+        (int[2])PLAYERPEN_SPLASH_START_SIZE[1]+((int[2])PLAYERPEN_SPLASH_IMAGE_SIZE[1] - (int[2])PLAYERPEN_SPLASH_START_SIZE[1])*growthPercentage
     });
 
     if(growthPercentage < 1) return;
     
     fullyGrown = true;
-    sprite_sptr->setLocalSize(SPLASH_IMAGE_SIZE);
+    sprite_sptr->setLocalSize(PLAYERPEN_SPLASH_IMAGE_SIZE);
 
     if(!coliding) return;
     colisor_sptr = Colisor::createColisor("damaging",(Transform*)this);
-    colisor_sptr->setLocalSize(SPLASH_HITBOX_SIZE);     
+    colisor_sptr->setLocalSize(PLAYERPEN_SPLASH_HITBOX_SIZE);     
 }
