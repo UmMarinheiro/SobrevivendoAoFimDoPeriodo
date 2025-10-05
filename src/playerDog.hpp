@@ -3,18 +3,15 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "bagDrop.hpp"
 #include "gameConstants.hpp"
+#include "beggingDog.hpp"
 
-class PlayerBag : public Player
+class PlayerDog : public Player
 {
 private:
-    std::vector<std::shared_ptr<BagDrop>> drops;
-    float nextSplash;
+    std::shared_ptr<BeggingDog> dog_sptr;
 public:
-    PlayerBag(std::string asset);
-
-    void tryMakeDrop(float t, bool coliding);
+    PlayerDog(std::string asset);
 
     void startRec();
     void startPast();
