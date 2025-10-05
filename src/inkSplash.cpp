@@ -26,7 +26,6 @@ void InkSplash::update()
     if(fullyGrown) return;
 
     float growthPercentage = (float)getTimeFromStart()/PLAYERPEN_SPLASH_GROWTH_MS;
-    std::cout<<growthPercentage<<std::endl;
     sprite_sptr->setLocalSize({
         (int[2])PLAYERPEN_SPLASH_START_SIZE[0]+((int[2])PLAYERPEN_SPLASH_IMAGE_SIZE[0] - (int[2])PLAYERPEN_SPLASH_START_SIZE[0])*growthPercentage,
         (int[2])PLAYERPEN_SPLASH_START_SIZE[1]+((int[2])PLAYERPEN_SPLASH_IMAGE_SIZE[1] - (int[2])PLAYERPEN_SPLASH_START_SIZE[1])*growthPercentage
