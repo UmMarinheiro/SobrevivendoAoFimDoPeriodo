@@ -86,27 +86,27 @@ void Menu::loadMenuImages() {
         menuImages["volumeMinus"] = volumeMinus;
     }
 //===================================================ICONES DOS ITENS=================================================================
-    Mat Mochila = imread("assets/itens/mochila.png", IMREAD_UNCHANGED);
+    Mat Mochila = imread("assets/items/Mochila/imagem.png", IMREAD_UNCHANGED);
     if(!Mochila.empty()){
         menuImages["Mochila"] = Mochila;
     }
-    Mat Marmita = imread("assets/itens/marmita.png", IMREAD_UNCHANGED);
+    Mat Marmita = imread("assets/items/Marmita/imagem.png", IMREAD_UNCHANGED);
     if(!Marmita.empty()){  
         menuImages["Marmita"] = Marmita;
     }
-    Mat Liga = imread("assets/itens/liga.png", IMREAD_UNCHANGED);
+    Mat Liga = imread("assets/items/Liga/imagem.png", IMREAD_UNCHANGED);
     if(!Liga.empty()){  
         menuImages["Liga"] = Liga;
     }
-    Mat Caneta = imread("assets/itens/orange.png", IMREAD_UNCHANGED);
+    Mat Caneta = imread("assets/items/Caneta/imagem.png", IMREAD_UNCHANGED);
     if(!Caneta.empty()){
         menuImages["Caneta"] = Caneta;
     }
-    Mat Ar = imread("assets/itens/orange.png", IMREAD_UNCHANGED);
+    Mat Ar = imread("assets/items/Ar-nao-condicionado/imagem.png", IMREAD_UNCHANGED);
     if(!Ar.empty()){
         menuImages["Ar"] = Ar;
     }
-    Mat Bolso = imread("assets/itens/orange.png", IMREAD_UNCHANGED);
+    Mat Bolso = imread("assets/items/Bolsos-Vazios/imagem.png", IMREAD_UNCHANGED);
     if(!Bolso.empty()){
         menuImages["Bolso"] = Bolso;
     }
@@ -159,7 +159,7 @@ void Menu::inicializarItensDescricao() {
         {"Mochila", "Mochila", "Item essencial para carregar materiais academicos", false, posicoes[0]},
         {"Marmita", "Marmita", "Refeicao caseira para manter o foco nas aulas", false, posicoes[1]},
         {"Liga", "Liga", "Otima para guardar dinheiro, mas tambem para atirar nos colegas", false, posicoes[2]},
-        {"Caneta", "Calculadora", "Essencial para calculos complexos", false, posicoes[3]},
+        {"Caneta", "Caneta", "Essencial para calculos complexos", false, posicoes[3]},
         {"Ar", "Ar", "As vezes precisamos tomar um ar", false, posicoes[4]},
         {"Bolso", "Bolso", "Lisossomos", false, posicoes[5]}
     };

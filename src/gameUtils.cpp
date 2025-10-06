@@ -15,7 +15,7 @@ using namespace cv;
 namespace fs = std::filesystem;
 
 bool initializeCamera(VideoCapture& capture) {
-    if (!capture.open("assets/images/video.mp4")) {
+    if (!capture.open(0)) {
         cout << "Erro ao abrir a câmera!" << endl;
         return false;
     }
@@ -94,8 +94,8 @@ ItemData getRandomItem() {
     else if (selectedFolder == "Mochila") {item.itemKey = "Mochila";}
     else if (selectedFolder == "Liga") {item.itemKey = "Liga";}
     else if (selectedFolder == "Caneta") {item.itemKey = "Caneta";}
-    else if (selectedFolder == "Ar") {item.itemKey = "Ar";}
-    else if (selectedFolder == "Bolso") {item.itemKey = "Bolso";}
+    else if (selectedFolder == "Ar-nao-condicionado") {item.itemKey = "Ar";}
+    else if (selectedFolder == "Bolsos-Vazios") {item.itemKey = "Bolso";}
 
     string folderPath = itemsPath + "/" + selectedFolder;
     item.imagePath = folderPath + "/imagem.png";
