@@ -48,8 +48,6 @@ void RubberBand::update()
         auto [x, y] = getGlobalPos();
         auto [vx, vy] = velocity;
         setGlobalPos({x + vx*deltaTime, y + vy*deltaTime});
-        
-        lastFrameTime = currentTime;
     }
     else 
     {
@@ -66,4 +64,5 @@ void RubberBand::update()
         colisor_sptr = Colisor::createColisor("damaging",(Transform*)this);
         colisor_sptr->setLocalSize(PLAYERRUBBER_HITBOX_SIZE);     
     }
+    lastFrameTime = currentTime;
 }

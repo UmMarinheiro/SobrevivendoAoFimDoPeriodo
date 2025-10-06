@@ -98,6 +98,18 @@ void Menu::loadMenuImages() {
     if(!Liga.empty()){  
         menuImages["Liga"] = Liga;
     }
+    Mat Caneta = imread("assets/itens/orange.png", IMREAD_UNCHANGED);
+    if(!Caneta.empty()){
+        menuImages["Caneta"] = Caneta;
+    }
+    Mat Ar = imread("assets/itens/orange.png", IMREAD_UNCHANGED);
+    if(!Ar.empty()){
+        menuImages["Ar"] = Ar;
+    }
+    Mat Bolso = imread("assets/itens/orange.png", IMREAD_UNCHANGED);
+    if(!Bolso.empty()){
+        menuImages["Bolso"] = Bolso;
+    }
 }
 //=====================================================================================================================
 void Menu::initializeButtonAnimations() {
@@ -147,8 +159,9 @@ void Menu::inicializarItensDescricao() {
         {"Mochila", "Mochila", "Item essencial para carregar materiais academicos", false, posicoes[0]},
         {"Marmita", "Marmita", "Refeicao caseira para manter o foco nas aulas", false, posicoes[1]},
         {"Liga", "Liga", "Otima para guardar dinheiro, mas tambem para atirar nos colegas", false, posicoes[2]},
-        //{"Calculadora", "Calculadora", "Essencial para calculos complexos", false, posicoes[4]},
-        //{"Garrafa", "Garrafa de Agua", "Hidratacao é fundamental para o aprendizado", false, posicoes[5]}
+        {"Caneta", "Calculadora", "Essencial para calculos complexos", false, posicoes[3]},
+        {"Ar", "Ar", "As vezes precisamos tomar um ar", false, posicoes[4]},
+        {"Bolso", "Bolso", "Lisossomos", false, posicoes[5]}
     };
 }
 
@@ -229,13 +242,7 @@ void Menu::drawMainMenu(Mat& menu) {
         Mat logo = menuImages["logo"];
         Point logoPos(camWidth/2 - 150, 50);
         drawImageOnMenu(menu, logo, logoPos, Size(300, 100));
-    } /*else {
-        putText(menu, "Sobrevivendo Ao Fim Do Periodo",
-                Point(camWidth * 0.25 - 35, camHeight * 0.25),
-                FONT_HERSHEY_TRIPLEX, 2.0,
-                Scalar(255, 255, 255), 3);
-    }*/
-
+    } 
     botaoJogar = animBotaoJogar.rect;
     botaoOpcoes = animBotaoOpcoes.rect;
     botaoDesc = animBotaoDesc.rect;

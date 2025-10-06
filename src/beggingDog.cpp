@@ -47,8 +47,6 @@ void BeggingDog::update()
         vx *= PLAYERDOG_VELOCITY; 
         vy *= PLAYERDOG_VELOCITY;
         setGlobalPos({x + vx*deltaTime, y + vy*deltaTime});
-        
-        lastFrameTime = currentTime;
     }
     else
     {
@@ -67,4 +65,5 @@ void BeggingDog::update()
         colisor_sptr = Colisor::createColisor("damaging",(Transform*)this);
         colisor_sptr->setLocalSize(PLAYERDOG_HITBOX_SIZE); 
     }    
+    lastFrameTime = currentTime;
 }
