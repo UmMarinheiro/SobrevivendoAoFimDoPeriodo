@@ -45,21 +45,21 @@
 #define PLAYERRUBBER_START_SIZE {10, 10}
 #define PLAYERRUBBER_IMAGE_SIZE {30, 30}
 #define PLAYERRUBBER_HITBOX_SIZE {15, 15}
-#define PLAYERRUBBER_IMAGE "assets/itens/liga.png"
+#define PLAYERRUBBER_IMAGE "assets/items/Liga/imagem.png"
 #define PLAYERRUBBER_VELOCITY 75
 #define PLAYERRUBBER_SPAWN_TIME 4000
 
 // Ar não condicionado
-#define PLAYERAIR_NAME "Ar"
+#define PLAYERAIR_NAME "Ar-nao-condicionado"
 #define PLAYERAIR_DROP_GROWTH_MS 1000
 #define PLAYERAIR_DEVICE_SIZE {50,50}
 #define PLAYERAIR_DROP_START_SIZE {10, 10}
 #define PLAYERAIR_DROP_IMAGE_SIZE {30, 30}
 #define PLAYERAIR_DROP_HITBOX_SIZE {15, 15}
-#define PLAYERAIR_DEVICE_IMAGE "assets/images/arcondicionado.jpeg"
+#define PLAYERAIR_DEVICE_IMAGE "assets/images/arcondicionado.png"
 #define PLAYERAIR_DROP_IMAGE "assets/images/gotas.png"
 #define PLAYERAIR_DROP_VELOCITY 50
 #define PLAYERAIR_DROP_INTERVAL_MS 4000
 
 // Força que o jogo só dê esse item
-//#define ONLY_ITEM_NAME PLAYERAIR_NAME
+#define ONLY_ITEM_NAME PLAYERDOG_NAME

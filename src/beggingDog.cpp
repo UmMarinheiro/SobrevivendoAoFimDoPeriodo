@@ -47,9 +47,11 @@ void BeggingDog::update()
         vx *= PLAYERDOG_VELOCITY; 
         vy *= PLAYERDOG_VELOCITY;
         setGlobalPos({x + vx*deltaTime, y + vy*deltaTime});
+        lastFrameTime = currentTime;
     }
     else
     {
+        lastFrameTime = currentTime;
         float growthPercentage = (float)currentTime/PLAYERDOG_GROWTH_MS;
         sprite_sptr->setLocalSize({
             (int[2])PLAYERDOG_START_SIZE[0]+((int[2])PLAYERDOG_IMAGE_SIZE[0] - (int[2])PLAYERDOG_START_SIZE[0])*growthPercentage,
@@ -65,5 +67,4 @@ void BeggingDog::update()
         colisor_sptr = Colisor::createColisor("damaging",(Transform*)this);
         colisor_sptr->setLocalSize(PLAYERDOG_HITBOX_SIZE); 
     }    
-    lastFrameTime = currentTime;
 }
