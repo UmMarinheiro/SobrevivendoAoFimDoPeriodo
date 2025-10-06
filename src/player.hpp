@@ -32,7 +32,6 @@ private:
 
 public:
     Player(std::string asset);
-    static std::shared_ptr<Player> createPlayer(std::string asset, std::string item_name);
 
     void appendPosToBuffer(const std::pair<float, float> &pos);
     std::pair<float, float> getPosFromBuffer();
