@@ -233,8 +233,9 @@ void handleGameState(shared_ptr<GameInstance> game, CascadeClassifier& cascade, 
                 game->endTurn();
                 turno = PHOTO;
             }
-            else if(game->hasGameEnded())
+            else if(game->hasGameEnded()) 
             {
+                aplicarGameOver(frame);
                 estado = SAIR_JOGO; 
             }
             break;
@@ -256,7 +257,7 @@ void handleDescriptionState(Menu& gameMenu) {
     gameMenu.showDescriptionMenu();
     int key = waitKey(30);
     if (key == 27) estado = SAIR;
-    if(key == 'g') gameMenu.desbloquearItem("Bolso");
+    if(key == 'g') gameMenu.desbloquearItem("Marmita");
 }
 
 void handlePhotoTurn(Mat& frame, CascadeClassifier& cascade) {
@@ -313,8 +314,34 @@ void handlePhotoTurn(Mat& frame, CascadeClassifier& cascade) {
     imshow(wName, smallFrame);
 }
 
+void aplicarGameOver(Mat& frame) {
+    Mat gameover = imread("assets/images/game_over.png", IMREAD_UNCHANGED);
+    if (!gameover.empty()) {
+        resize(!gameover, gameover, frame.size());
+
+        if (gameover.channels() == 4) {
+            vector<Mat> channels;
+            split(gameover, channels);
+
+            Mat bgrGameover, mask;
+            merge(vector<Mat>{channels[0], channels[1], channels[2]}, bgrGameOver);
+            mask = channels[3];
+
+            Mat roi = frame(Rect(0, 0, bgrGameover.cols, bgrGameover.rows));
+
+            Mat temp;
+            addWeighted(bgrGameover, 1, roi, 1.0, 0.0, temp);
+            temp.copyTo(roi, mask);
+        } else {
+            Mat blended;
+            addWeighted(gameover, 1, frame, 1.0, 0.0, blended);
+            frame = blended;
+        }
+    }
+}
+
 void aplicarOverlayGuia(Mat& frame) {
-    Mat overlay = imread("assets/overlay.png", IMREAD_UNCHANGED);
+    Mat overlay = imread("assets/images/overlay.png", IMREAD_UNCHANGED);
     if (!overlay.empty()) {
         resize(overlay, overlay, frame.size());
 
