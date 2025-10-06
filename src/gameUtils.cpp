@@ -1,4 +1,5 @@
 #include "gameUtils.hpp"
+#include "globals.hpp"
 #include "opencvUtils.hpp"
 #include "sprite.hpp"
 #include "colisor.hpp"
@@ -14,8 +15,10 @@ using namespace std;
 using namespace cv;
 namespace fs = std::filesystem;
 
+void aplicarGameOver(Mat& frame);
+
 bool initializeCamera(VideoCapture& capture) {
-    if (!capture.open("assets/images/video.mp4")) {
+    if (!capture.open(0)) {
         cout << "Erro ao abrir a câmera!" << endl;
         return false;
     }
@@ -235,8 +238,19 @@ void handleGameState(shared_ptr<GameInstance> game, CascadeClassifier& cascade, 
             }
             else if(game->hasGameEnded()) 
             {
-                aplicarGameOver(frame);
-                estado = SAIR_JOGO; 
+                Mat originalFrame = frame.clone();
+    
+                vector<Rect> faces;
+                Mat smallFrame, grayFrame;
+                
+                double fx = 1.0 / scale;
+                resize(frame, smallFrame, Size(), fx, fx, INTER_LINEAR_EXACT);
+                if (tryflip)
+                    flip(smallFrame, smallFrame, 1);
+                cvtColor(smallFrame, grayFrame, COLOR_BGR2GRAY);
+                equalizeHist(grayFrame, grayFrame);
+                aplicarGameOver(smallFrame);
+                imshow(wName, smallFrame); 
             }
             break;
     }
@@ -317,14 +331,14 @@ void handlePhotoTurn(Mat& frame, CascadeClassifier& cascade) {
 void aplicarGameOver(Mat& frame) {
     Mat gameover = imread("assets/images/game_over.png", IMREAD_UNCHANGED);
     if (!gameover.empty()) {
-        resize(!gameover, gameover, frame.size());
+        resize(gameover, gameover, frame.size());
 
         if (gameover.channels() == 4) {
             vector<Mat> channels;
             split(gameover, channels);
 
             Mat bgrGameover, mask;
-            merge(vector<Mat>{channels[0], channels[1], channels[2]}, bgrGameOver);
+            merge(vector<Mat>{channels[0], channels[1], channels[2]}, bgrGameover);
             mask = channels[3];
 
             Mat roi = frame(Rect(0, 0, bgrGameover.cols, bgrGameover.rows));
