@@ -25,14 +25,12 @@ int BagDrop::getTimeFromStart()
 void BagDrop::update()
 {
     int currentTime = getTimeFromStart();
-    {
-        float deltaTime = (float)(currentTime - lastFrameTime)/1000;
-        
-        auto [x, y] = getGlobalPos();
-        setGlobalPos({x,y+PLAYERBAG_DROP_VELOCITY*deltaTime});
-        
-        lastFrameTime = currentTime;
-    }
+    float deltaTime = (float)(currentTime - lastFrameTime)/1000;
+    
+    auto [x, y] = getGlobalPos();
+    setGlobalPos({x,y+PLAYERBAG_DROP_VELOCITY*deltaTime});
+    
+    lastFrameTime = currentTime;
     
     if(fullyGrown) return;
 

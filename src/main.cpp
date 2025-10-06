@@ -27,7 +27,7 @@ Estado estado = MENU;
 
 string cascadeName;
 string wName = "Game";
-bool tryflip = false;
+bool tryflip = true;
 double scale = 1;
 
 AudioManager audioManager;

@@ -7,6 +7,7 @@
 #include "playerDog.hpp"
 #include "playerRubber.hpp"
 #include "playerBag.hpp"
+#include "playerAir.hpp"
 #include "spriteMan.hpp"
 #include <chrono>
 #include <memory>
@@ -47,6 +48,7 @@ std::shared_ptr<Player> GameInstance::createPlayer(std::string asset, std::strin
     else if(item_name == PLAYERBAG_NAME) return std::make_shared<PlayerBag>(asset);
     else if(item_name == PLAYERDOG_NAME) return std::make_shared<PlayerDog>(asset);
     else if(item_name == PLAYERRUBBER_NAME) return std::make_shared<PlayerRubber>(asset, this);
+    else if(item_name == PLAYERAIR_NAME) return std::make_shared<PlayerAir>(asset);
     else return std::make_shared<Player>(asset);
 }
 
