@@ -62,4 +62,4 @@
 #define PLAYERAIR_DROP_INTERVAL_MS 4000
 
 // Força que o jogo só dê esse item
-#define ONLY_ITEM_NAME PLAYERDOG_NAME
+//#define ONLY_ITEM_NAME PLAYERDOG_NAME
