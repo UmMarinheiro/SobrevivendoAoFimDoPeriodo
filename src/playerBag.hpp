@@ -10,7 +10,7 @@ class PlayerBag : public Player
 {
 private:
     std::vector<std::shared_ptr<BagDrop>> drops;
-    float nextSplash;
+    float nextDrop;
 public:
     PlayerBag(std::string asset);
 

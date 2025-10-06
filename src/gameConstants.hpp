@@ -1,7 +1,7 @@
 #pragma once
 #define MIN_PIXEL_FOR_COLISION 1
 
-#define DRAWHIBOXES
+#define DRAWHIBOXES // Remover para parar de desenhar hitboxes
 
 #define PREPARE_DURATION_MS 3000
 #define TURN_DURATION_MS 10000
@@ -38,3 +38,16 @@
 #define PLAYERDOG_HITBOX_SIZE {25, 25}
 #define PLAYERDOG_IMAGE "assets/images/orange.png"
 #define PLAYERDOG_VELOCITY 25
+
+// Liga elastica
+#define PLAYERRUBBER_NAME "Liga"
+#define PLAYERRUBBER_GROWTH_MS 1000
+#define PLAYERRUBBER_START_SIZE {10, 10}
+#define PLAYERRUBBER_IMAGE_SIZE {30, 30}
+#define PLAYERRUBBER_HITBOX_SIZE {15, 15}
+#define PLAYERRUBBER_IMAGE "assets/itens/liga.png"
+#define PLAYERRUBBER_VELOCITY 75
+#define PLAYERRUBBER_SPAWN_TIME 4000
+
+// Força que o jogo só dê esse item
+//#define ONLY_ITEM_NAME PLAYERRUBBER_NAME

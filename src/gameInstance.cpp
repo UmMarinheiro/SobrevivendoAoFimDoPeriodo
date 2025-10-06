@@ -1,7 +1,12 @@
 #include "gameInstance.hpp"
 #include "colisorMan.hpp"
+#include "gameConstants.hpp"
 #include "opencvUtils.hpp"
 #include "player.hpp"
+#include "playerPen.hpp"
+#include "playerDog.hpp"
+#include "playerRubber.hpp"
+#include "playerBag.hpp"
 #include "spriteMan.hpp"
 #include <chrono>
 #include <memory>
@@ -31,10 +36,23 @@ void GameInstance::drawHiboxes(cv::Mat frame)
                     cv::Scalar(255,0,0), 1);
     }
 }
+std::shared_ptr<Player> GameInstance::getCurrentPlayer() {return current;}
+
+std::shared_ptr<Player> GameInstance::createPlayer(std::string asset, std::string item_name)
+{
+    #ifdef ONLY_ITEM_NAME
+    item_name = ONLY_ITEM_NAME;
+    #endif
+    if(item_name == PLAYERPEN_NAME) return std::make_shared<PlayerPen>(asset);
+    else if(item_name == PLAYERBAG_NAME) return std::make_shared<PlayerBag>(asset);
+    else if(item_name == PLAYERDOG_NAME) return std::make_shared<PlayerDog>(asset);
+    else if(item_name == PLAYERRUBBER_NAME) return std::make_shared<PlayerRubber>(asset, this);
+    else return std::make_shared<Player>(asset);
+}
 
 void GameInstance::startTurn(int number, std::string item)
 {
-    current = Player::createPlayer("assets/players/player" + std::to_string(number) + ".png", item);
+    current = createPlayer("assets/players/player" + std::to_string(number) + ".png", item);
     startPositioning();
 }
 void GameInstance::updateTurn()

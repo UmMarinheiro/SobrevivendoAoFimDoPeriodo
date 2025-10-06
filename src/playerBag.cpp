@@ -7,21 +7,21 @@ PlayerBag::PlayerBag(std::string asset) : Player(asset){}
 
 void PlayerBag::tryMakeDrop(float t, bool coliding)
 {
-    if(t > nextSplash)
+    if(t > nextDrop)
     {
         drops.push_back(BagDrop::createBagDrop(getGlobalPos(), coliding));
-        nextSplash += PLAYERBAG_DROP_INTERVAL_MS;
+        nextDrop += PLAYERBAG_DROP_INTERVAL_MS;
     }
 }
 
 void PlayerBag::startRec() 
 {
-    nextSplash = PLAYERBAG_DROP_INTERVAL_MS;
+    nextDrop = PLAYERBAG_DROP_INTERVAL_MS;
     Player::startRec();
 }
 void PlayerBag::startPast() 
 {
-    nextSplash = PLAYERBAG_DROP_INTERVAL_MS;
+    nextDrop = PLAYERBAG_DROP_INTERVAL_MS;
     Player::startPast();
 }
 void PlayerBag::updateRec(const std::pair<float, float>* pos, float t)
