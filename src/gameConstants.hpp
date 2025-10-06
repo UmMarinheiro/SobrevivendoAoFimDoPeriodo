@@ -18,7 +18,7 @@
 #define PLAYERPEN_SPLASH_START_SIZE {10, 10}
 #define PLAYERPEN_SPLASH_IMAGE_SIZE {40, 40}
 #define PLAYERPEN_SPLASH_HITBOX_SIZE {30, 30}
-#define PLAYERPEN_SPLASH_IMAGE "assets/images/orange.png"
+#define PLAYERPEN_SPLASH_IMAGE "assets/images/inksplash.png"
 
 // Mochila Bomba
 #define PLAYERBAG_NAME "Mochila"
@@ -27,7 +27,7 @@
 #define PLAYERBAG_DROP_START_SIZE {10, 10}
 #define PLAYERBAG_DROP_IMAGE_SIZE {35, 35}
 #define PLAYERBAG_DROP_HITBOX_SIZE {25, 25}
-#define PLAYERBAG_DROP_IMAGE "assets/images/orange.png"
+#define PLAYERBAG_DROP_IMAGE "assets/images/caderno.png"
 #define PLAYERBAG_DROP_VELOCITY 50
 
 // Marmita Cobiçada
@@ -36,7 +36,7 @@
 #define PLAYERDOG_START_SIZE {10, 10}
 #define PLAYERDOG_IMAGE_SIZE {35, 35}
 #define PLAYERDOG_HITBOX_SIZE {25, 25}
-#define PLAYERDOG_IMAGE "assets/images/orange.png"
+#define PLAYERDOG_IMAGE "assets/images/dog.png"
 #define PLAYERDOG_VELOCITY 25
 
 // Liga elastica
@@ -56,8 +56,8 @@
 #define PLAYERAIR_DROP_START_SIZE {10, 10}
 #define PLAYERAIR_DROP_IMAGE_SIZE {30, 30}
 #define PLAYERAIR_DROP_HITBOX_SIZE {15, 15}
-#define PLAYERAIR_DEVICE_IMAGE "assets/images/arrascaeta.jpeg"
-#define PLAYERAIR_DROP_IMAGE "assets/images/orange.png"
+#define PLAYERAIR_DEVICE_IMAGE "assets/images/arcondicionado.jpeg"
+#define PLAYERAIR_DROP_IMAGE "assets/images/gotas.png"
 #define PLAYERAIR_DROP_VELOCITY 50
 #define PLAYERAIR_DROP_INTERVAL_MS 4000
 
