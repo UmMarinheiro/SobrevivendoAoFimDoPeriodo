@@ -376,6 +376,34 @@ void Menu::drawOptionsMenu(Mat& options) {
 }
 //=====================================================================================================================
 void Menu::drawDescriptionMenu(Mat& desc) {
+
+    std::fstream file;
+    file.open("assets/players/itens_recebidos.txt", ios_base::in);
+    if (file.is_open()){
+        string line;    
+        while (getline(file, line)) 
+        {
+            if(line.find("Mochila") != string::npos){
+                desbloquearItem("Mochila");
+            }
+            if(line.find("Marmita") != string::npos){
+                desbloquearItem("Marmita");
+            }
+            if(line.find("Liga") != string::npos){
+                desbloquearItem("Liga");
+            }
+            if(line.find("Caneta") != string::npos){
+                desbloquearItem("Caneta");
+            }
+            if(line.find("Ar") != string::npos){
+                desbloquearItem("Ar");
+            }
+            if(line.find("Bolso") != string::npos){
+                desbloquearItem("Bolso");
+            }
+        }
+        file.close();
+    }
     
     if (menuImages.find("mopa.png") != menuImages.end()) {
         Mat background = menuImages["options_bg"];

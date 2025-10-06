@@ -8,6 +8,7 @@
 #include <chrono>
 #include "animatedSprite.hpp"
 #include "audioManager.hpp"
+#include <fstream>
 
 using namespace cv;
 
