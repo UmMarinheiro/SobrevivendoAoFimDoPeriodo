@@ -15,7 +15,7 @@ using namespace cv;
 namespace fs = std::filesystem;
 
 bool initializeCamera(VideoCapture& capture) {
-    if (!capture.open(0)) {
+    if (!capture.open("assets/images/video.mp4")) {
         cout << "Erro ao abrir a câmera!" << endl;
         return false;
     }
@@ -90,9 +90,12 @@ ItemData getRandomItem() {
     item.folderName = selectedFolder;
     item.index = selectedIndex;
 
-    if(selectedFolder == "Marmita") {item.itemKey = "Marmita";}
-    else if(selectedFolder == "Mochila") {item.itemKey = "Mochila";}
-    else if(selectedFolder == "Liga") {item.itemKey = "Liga";}
+    if (selectedFolder == "Marmita") {item.itemKey = "Marmita";}
+    else if (selectedFolder == "Mochila") {item.itemKey = "Mochila";}
+    else if (selectedFolder == "Liga") {item.itemKey = "Liga";}
+    else if (selectedFolder == "Caneta") {item.itemKey = "Caneta";}
+    else if (selectedFolder == "Ar") {item.itemKey = "Ar";}
+    else if (selectedFolder == "Bolso") {item.itemKey = "Bolso";}
 
     string folderPath = itemsPath + "/" + selectedFolder;
     item.imagePath = folderPath + "/imagem.png";
@@ -253,7 +256,7 @@ void handleDescriptionState(Menu& gameMenu) {
     gameMenu.showDescriptionMenu();
     int key = waitKey(30);
     if (key == 27) estado = SAIR;
-    if(key == 'g') gameMenu.desbloquearItem("Liga");
+    if(key == 'g') gameMenu.desbloquearItem("Bolso");
 }
 
 void handlePhotoTurn(Mat& frame, CascadeClassifier& cascade) {
